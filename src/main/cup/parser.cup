@@ -15,6 +15,10 @@ terminal OPEN_BRACKET;
 terminal CLOSE_BRACKET;
 terminal INTEGER_CONSTANT;
 terminal IDENTIFIER;
+terminal WHILE;
+terminal OPEN_CURLY_BRACKET;
+terminal CLOSE_CURLY_BRACKET;
+terminal LESS_THAN;
 
 // Non Terminals
 non terminal sentence;
@@ -23,6 +27,10 @@ non terminal assignment;
 non terminal expression;
 non terminal term;
 non terminal factor;
+non terminal iteration;
+non terminal condition;
+non terminal comparation;
+non terminal comparator;
 
 // Start Symbol Definition
 start with block;
@@ -31,6 +39,17 @@ block ::= sentence {: System.out.println("Block"); :};
 block ::= block sentence {: System.out.println("Blocks"); :};
 
 sentence ::= assignment {: System.out.println("End Sentence"); :};
+
+sentence ::= iteration {: System.out.println("Sentence interation"); :};
+
+iteration ::= WHILE OPEN_BRACKET condition CLOSE_BRACKET OPEN_CURLY_BRACKET block CLOSE_CURLY_BRACKET {:System.out.println("While"); :};
+
+condition ::= comparation {: System.out.println("Condition"); :};
+
+comparation ::= expression comparator expression {: System.out.println("Comparation"); :};
+
+comparator ::= LESS_THAN {: System.out.println("<"); :};
+
 assignment ::= IDENTIFIER ASSIG expression {: System.out.println("Assignment"); :};
 expression ::= expression PLUS term {: System.out.println("+"); :};
 expression ::= expression SUB term {: System.out.println("-"); :};

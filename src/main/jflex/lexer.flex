@@ -33,6 +33,7 @@ LineTerminator = \r|\n|\r\n
 InputCharacter = [^\r\n]
 Identation =  [ \t\f]
 
+While = "ciclo"
 Plus = "+"
 Mult = "*"
 Sub = "-"
@@ -40,12 +41,16 @@ Div = "/"
 Assig = "="
 OpenBracket = "("
 CloseBracket = ")"
+OpenCurlyBracket = "{"
+CloseCurlyBracket = "}"
 Letter = [a-zA-Z]
 Digit = [0-9]
+LessThan = "<"
 
 WhiteSpace = {LineTerminator} | {Identation}
 Identifier = {Letter} ({Letter}|{Digit})*
 IntegerConstant = {Digit}+
+
 
 %%
 
@@ -54,6 +59,7 @@ IntegerConstant = {Digit}+
 
 <YYINITIAL> {
   /* identifiers */
+  {While}                                  { return symbol(ParserSym.WHILE); }  
   {Identifier}                             { return symbol(ParserSym.IDENTIFIER, yytext()); }
   /* Constants */
   {IntegerConstant}                        { return symbol(ParserSym.INTEGER_CONSTANT, yytext()); }
@@ -66,6 +72,9 @@ IntegerConstant = {Digit}+
   {Assig}                                   { return symbol(ParserSym.ASSIG); }
   {OpenBracket}                             { return symbol(ParserSym.OPEN_BRACKET); }
   {CloseBracket}                            { return symbol(ParserSym.CLOSE_BRACKET); }
+  {OpenCurlyBracket}                        { return symbol(ParserSym.OPEN_CURLY_BRACKET); }
+  {CloseCurlyBracket}                       { return symbol(ParserSym.CLOSE_CURLY_BRACKET); }
+  {LessThan}                                { return symbol(ParserSym.LESS_THAN); }  
 
   /* whitespace */
   {WhiteSpace}                   { /* ignore */ }
