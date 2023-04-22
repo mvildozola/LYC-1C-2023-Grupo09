@@ -18,15 +18,19 @@ terminal IDENTIFIER;
 
 // Non Terminals
 non terminal sentence;
+non terminal block;
 non terminal assignment;
 non terminal expression;
 non terminal term;
 non terminal factor;
 
 // Start Symbol Definition
-start with sentence;
+start with block;
 
-sentence ::= assignment {: System.out.println("End"); :};
+block ::= sentence {: System.out.println("Block"); :};
+block ::= block sentence {: System.out.println("Blocks"); :};
+
+sentence ::= assignment {: System.out.println("End Sentence"); :};
 assignment ::= IDENTIFIER ASSIG expression {: System.out.println("Assignment"); :};
 expression ::= expression PLUS term {: System.out.println("+"); :};
 expression ::= expression SUB term {: System.out.println("-"); :};
