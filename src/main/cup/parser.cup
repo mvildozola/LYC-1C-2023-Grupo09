@@ -16,6 +16,8 @@ terminal CLOSE_BRACKET;
 terminal INTEGER_CONSTANT;
 terminal IDENTIFIER;
 terminal WHILE;
+terminal IF;
+terminal ELSE;
 terminal OPEN_CURLY_BRACKET;
 terminal CLOSE_CURLY_BRACKET;
 terminal LESS_THAN;
@@ -28,6 +30,7 @@ non terminal expression;
 non terminal term;
 non terminal factor;
 non terminal iteration;
+non terminal selection;
 non terminal condition;
 non terminal comparation;
 non terminal comparator;
@@ -42,9 +45,17 @@ sentence ::= assignment {: System.out.println("End Sentence"); :};
 
 sentence ::= iteration {: System.out.println("Sentence interation"); :};
 
+sentence ::= selection {: System.out.println("Sentence selecction"); :};
+
 iteration ::= WHILE OPEN_BRACKET condition CLOSE_BRACKET OPEN_CURLY_BRACKET block CLOSE_CURLY_BRACKET {:System.out.println("While"); :};
 
+selection ::= IF OPEN_BRACKET condition CLOSE_BRACKET OPEN_CURLY_BRACKET block CLOSE_CURLY_BRACKET {:System.out.println("If"); :};
+
+selection ::= IF OPEN_BRACKET condition CLOSE_BRACKET OPEN_CURLY_BRACKET block CLOSE_CURLY_BRACKET ELSE OPEN_CURLY_BRACKET block CLOSE_CURLY_BRACKET {:System.out.println("If with Else"); :};
+
 condition ::= comparation {: System.out.println("Condition"); :};
+
+
 
 comparation ::= expression comparator expression {: System.out.println("Comparation"); :};
 
