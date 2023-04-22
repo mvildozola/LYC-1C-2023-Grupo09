@@ -34,6 +34,8 @@ InputCharacter = [^\r\n]
 Identation =  [ \t\f]
 
 While = "ciclo"
+If="if"
+Else= "else"
 Plus = "+"
 Mult = "*"
 Sub = "-"
@@ -60,6 +62,8 @@ IntegerConstant = {Digit}+
 <YYINITIAL> {
   /* identifiers */
   {While}                                  { return symbol(ParserSym.WHILE); }  
+  {If}                                     { return symbol(ParserSym.IF); } 
+  {Else}                                   { return symbol(ParserSym.ELSE); }
   {Identifier}                             { return symbol(ParserSym.IDENTIFIER, yytext()); }
   /* Constants */
   {IntegerConstant}                        { return symbol(ParserSym.INTEGER_CONSTANT, yytext()); }
