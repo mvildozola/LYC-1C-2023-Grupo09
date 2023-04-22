@@ -36,18 +36,21 @@ Identation =  [ \t\f]
 While = "ciclo"
 If="if"
 Else= "else"
-Plus = "+"
-Mult = "*"
-Sub = "-"
-Div = "/"
-Assig = "="
+
 OpenBracket = "("
 CloseBracket = ")"
 OpenCurlyBracket = "{"
 CloseCurlyBracket = "}"
 Letter = [a-zA-Z]
 Digit = [0-9]
+Comments =  "*-"~"-*"
 LessThan = "<"
+
+Plus = "+"
+Mult = "*"
+Sub = "-"
+Div = "/"
+Assig = "="
 
 WhiteSpace = {LineTerminator} | {Identation}
 Identifier = {Letter} ({Letter}|{Digit})*
@@ -60,6 +63,8 @@ IntegerConstant = {Digit}+
 /* keywords */
 
 <YYINITIAL> {
+  /* Comments */
+  {Comments}                                { /* ignore */ }
   /* identifiers */
   {While}                                  { return symbol(ParserSym.WHILE); }  
   {If}                                     { return symbol(ParserSym.IF); } 
@@ -81,9 +86,9 @@ IntegerConstant = {Digit}+
   {LessThan}                                { return symbol(ParserSym.LESS_THAN); }  
 
   /* whitespace */
-  {WhiteSpace}                   { /* ignore */ }
+  {WhiteSpace}                              { /* ignore */ }
 }
 
 
 /* error fallback */
-[^]                              { throw new UnknownCharacterException(yytext()); }
+[^]                                         { throw new UnknownCharacterException(yytext()); }
