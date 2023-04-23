@@ -27,6 +27,7 @@ terminal LESS_THAN;
 terminal GREATER_THAN;
 terminal AND;
 terminal OR;
+terminal NOT;
 
 // Non Terminals
 non terminal sentence;
@@ -65,6 +66,8 @@ selection ::= IF OPEN_BRACKET condition CLOSE_BRACKET OPEN_CURLY_BRACKET block C
 selection ::= IF OPEN_BRACKET condition CLOSE_BRACKET OPEN_CURLY_BRACKET block CLOSE_CURLY_BRACKET ELSE OPEN_CURLY_BRACKET block CLOSE_CURLY_BRACKET {:System.out.println("If with Else"); :};
 
 condition ::= comparation {: System.out.println("Condition"); :};
+
+condition ::= NOT comparation {: System.out.println("Condition with not"); :};
 
 condition ::= comparation AND comparation {: System.out.println("And"); :};
 
