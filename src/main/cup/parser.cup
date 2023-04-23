@@ -1,9 +1,25 @@
 package lyc.compiler;
 
 import java_cup.runtime.*;
+import java.util.*;
+import lyc.compiler.simbolsTable.SimbolTable;
+import lyc.compiler.simbolsTable.SimbolRow;
+import lyc.compiler.simbolsTable.DataType;
 
 class Parser;
 
+action code
+{:
+    public SimbolTable simbolTable = SimbolTable.getSingletonInstance();
+    public ArrayList<String> identifiersList = new ArrayList();
+:}
+
+parser code
+{:
+    public List<SimbolRow> getListaSimbolos() {
+        return action_obj.simbolTable.getListaSimbolos();
+    }
+:}
 
 // Terminals
 terminal ASSIG;
@@ -50,14 +66,16 @@ non terminal comparation;
 non terminal comparator;
 non terminal initiation;
 non terminal declare;
-non terminal type;
 non terminal variable;
+non terminal program;
 
 // Start Symbol Definition
-start with block;
+start with program;
+
+program ::= initiation block;
+
 block ::= sentence {: System.out.println("Block"); :};
 block ::= block sentence {: System.out.println("Blocks"); :};
-block ::= block initiation;
 
 sentence ::= assignment {: System.out.println("End Sentence"); :};
 
@@ -97,10 +115,25 @@ expression ::= term {: System.out.println("Expression = Term"); :};
 term ::= term MULT factor {: System.out.println("*"); :};
 term ::= term DIV factor {: System.out.println("/"); :};
 term ::= factor {: System.out.println("Term = factor"); :};
-factor ::= IDENTIFIER:id  {: System.out.println("Id: " + id); :};
-factor ::= INTEGER_CONSTANT:constant {: System.out.println("Constant: " + constant ); :};
-factor ::= STRING_CONSTANT:constant  {: System.out.println("Constant: " + constant ); :};
-factor ::= FLOAT_CONSTANT:constant   {: System.out.println("Constant: " + constant ); :};
+factor ::= IDENTIFIER:id  
+{: 
+    System.out.println("Id: " + id);
+:};
+factor ::= INTEGER_CONSTANT:constant 
+{: 
+    System.out.println("Constant integer: " + constant );
+    simbolTable.add("_"+constant, DataType.INT, constant.toString(), null); 
+:};
+factor ::= STRING_CONSTANT:constant  
+{: 
+    System.out.println("Constant string: " + constant );
+    simbolTable.add("_"+constant, DataType.STRING, constant.toString(), null);
+:};
+factor ::= FLOAT_CONSTANT:constant   
+{: 
+    System.out.println("Constant float: " + constant ); 
+    simbolTable.add("_"+constant, DataType.FLOAT, constant.toString(), null);
+:};
 factor ::= OPEN_BRACKET expression CLOSE_BRACKET {: System.out.println("Factor = (Expression)"); :};
 
 initiation ::= INIT OPEN_CURLY_BRACKET declare CLOSE_CURLY_BRACKET;
@@ -108,7 +141,7 @@ initiation ::= INIT OPEN_CURLY_BRACKET declare CLOSE_CURLY_BRACKET;
 declare ::= variable;
 declare ::= declare variable;
 
-variable ::= IDENTIFIER DOUBLE_POINTS type;
+variable ::= IDENTIFIER:id DOUBLE_POINTS INT {: simbolTable.add(""+id, DataType.INT, null, null); :};
+variable ::= IDENTIFIER:id DOUBLE_POINTS STRING {: simbolTable.add(""+id, DataType.STRING, null, null); :};
+variable ::= IDENTIFIER:id DOUBLE_POINTS FLOAT {: simbolTable.add(""+id, DataType.FLOAT, null, null); :};
 variable ::= IDENTIFIER COMMA variable;
-
-type ::= FLOAT | STRING | INT;
