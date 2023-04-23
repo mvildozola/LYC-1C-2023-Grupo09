@@ -18,6 +18,8 @@ terminal IDENTIFIER;
 terminal WHILE;
 terminal IF;
 terminal ELSE;
+terminal READ;
+terminal WRITE;
 terminal OPEN_CURLY_BRACKET;
 terminal CLOSE_CURLY_BRACKET;
 terminal LESS_THAN;
@@ -47,6 +49,11 @@ sentence ::= iteration {: System.out.println("Sentence interation"); :};
 
 sentence ::= selection {: System.out.println("Sentence selecction"); :};
 
+sentence ::= READ OPEN_BRACKET IDENTIFIER CLOSE_BRACKET {: System.out.println("Read"); :};
+
+// Agregar regla por const string
+sentence ::= WRITE OPEN_BRACKET IDENTIFIER CLOSE_BRACKET {: System.out.println("Write"); :};
+
 iteration ::= WHILE OPEN_BRACKET condition CLOSE_BRACKET OPEN_CURLY_BRACKET block CLOSE_CURLY_BRACKET {:System.out.println("While"); :};
 
 selection ::= IF OPEN_BRACKET condition CLOSE_BRACKET OPEN_CURLY_BRACKET block CLOSE_CURLY_BRACKET {:System.out.println("If"); :};
@@ -55,11 +62,11 @@ selection ::= IF OPEN_BRACKET condition CLOSE_BRACKET OPEN_CURLY_BRACKET block C
 
 condition ::= comparation {: System.out.println("Condition"); :};
 
-
-
 comparation ::= expression comparator expression {: System.out.println("Comparation"); :};
 
 comparator ::= LESS_THAN {: System.out.println("<"); :};
+
+
 
 assignment ::= IDENTIFIER ASSIG expression {: System.out.println("Assignment"); :};
 expression ::= expression PLUS term {: System.out.println("+"); :};
