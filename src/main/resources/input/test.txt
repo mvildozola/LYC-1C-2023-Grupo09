@@ -1,3 +1,4 @@
+
 a = 10 + 1
 ciclo ( 1 < 10 )
 {
@@ -48,3 +49,10 @@ a = .9999
 
 d = "asldk  fh sjf"
 d = "@sdADaSjfla%dfg"
+
+init {
+    variable1 : Int
+    variable1 : String
+    a1, b1 : Float
+    p1, p2, p3 : String
+}

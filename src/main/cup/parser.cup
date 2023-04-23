@@ -29,6 +29,12 @@ terminal GREATER_THAN;
 terminal AND;
 terminal OR;
 terminal NOT;
+terminal INIT;
+terminal DOUBLE_POINTS;
+terminal FLOAT;
+terminal STRING;
+terminal INT;
+terminal COMMA;
 
 // Non Terminals
 non terminal sentence;
@@ -42,12 +48,16 @@ non terminal selection;
 non terminal condition;
 non terminal comparation;
 non terminal comparator;
+non terminal initiation;
+non terminal declare;
+non terminal type;
+non terminal variable;
 
 // Start Symbol Definition
 start with block;
-
 block ::= sentence {: System.out.println("Block"); :};
 block ::= block sentence {: System.out.println("Blocks"); :};
+block ::= block initiation;
 
 sentence ::= assignment {: System.out.println("End Sentence"); :};
 
@@ -80,8 +90,6 @@ comparator ::= LESS_THAN {: System.out.println("<"); :};
 comparator ::= GREATER_THAN {: System.out.println(">"); :};
 
 assignment ::= IDENTIFIER ASSIG expression {: System.out.println("Assignment"); :};
-//assignment ::= IDENTIFIER ASSIG expression {: System.out.println("Assignment"); :};
-//assignment ::= IDENTIFIER ASSIG expression {: System.out.println("Assignment"); :};
 
 expression ::= expression PLUS term {: System.out.println("+"); :};
 expression ::= expression SUB term {: System.out.println("-"); :};
@@ -94,3 +102,13 @@ factor ::= INTEGER_CONSTANT:constant {: System.out.println("Constant: " + consta
 factor ::= STRING_CONSTANT:constant  {: System.out.println("Constant: " + constant ); :};
 factor ::= FLOAT_CONSTANT:constant   {: System.out.println("Constant: " + constant ); :};
 factor ::= OPEN_BRACKET expression CLOSE_BRACKET {: System.out.println("Factor = (Expression)"); :};
+
+initiation ::= INIT OPEN_CURLY_BRACKET declare CLOSE_CURLY_BRACKET;
+
+declare ::= variable;
+declare ::= declare variable;
+
+variable ::= IDENTIFIER DOUBLE_POINTS type;
+variable ::= IDENTIFIER COMMA variable;
+
+type ::= FLOAT | STRING | INT;

@@ -39,6 +39,10 @@ Else= "else"
 Read= "read"
 Write="write"
 Not="not"
+Init="init"
+Float="Float"
+String="String"
+Int="Int"
 
 OpenBracket = "("
 CloseBracket = ")"
@@ -59,6 +63,8 @@ Div = "/"
 Assig = "="
 DoubleQuote="\""
 Dot="."
+DoublePoints=":"
+Comma= ","
 
 WhiteSpace = {LineTerminator} | {Identation}
 Identifier = {Letter} ({Letter}|{Digit})*
@@ -82,6 +88,11 @@ FloatConstant = {Digit}*{Dot}{Digit}*
   {Read}                                   { return symbol(ParserSym.READ); }
   {Write}                                  { return symbol(ParserSym.WRITE); }
   {Not}                                    { return symbol(ParserSym.NOT); }
+  {DoublePoints}                           { return symbol(ParserSym.DOUBLE_POINTS); }
+  {Float}                                  { return symbol(ParserSym.FLOAT); }
+  {String}                                 { return symbol(ParserSym.STRING); }
+  {Int}                                    { return symbol(ParserSym.INT); }
+  {Init}                                   { return symbol(ParserSym.INIT); }
   {Identifier}                             { return symbol(ParserSym.IDENTIFIER, yytext()); }
   /* Constants */
   {IntegerConstant}                        { return symbol(ParserSym.INTEGER_CONSTANT, yytext()); }
@@ -102,6 +113,7 @@ FloatConstant = {Digit}*{Dot}{Digit}*
   {GreaterThan}                             { return symbol(ParserSym.GREATER_THAN); }
   {And}                                     { return symbol(ParserSym.AND); }
   {Or}                                      { return symbol(ParserSym.OR); }
+  {Comma}                                   { return symbol(ParserSym.COMMA); }
 
   /* whitespace */
   {WhiteSpace}                              { /* ignore */ }
