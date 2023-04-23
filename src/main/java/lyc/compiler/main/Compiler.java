@@ -5,6 +5,7 @@ import lyc.compiler.factories.FileFactory;
 import lyc.compiler.factories.ParserFactory;
 import lyc.compiler.files.FileOutputWriter;
 import lyc.compiler.files.SymbolTableGenerator;
+import lyc.compiler.simbolsTable.SimbolTable;
 
 import java.io.IOException;
 import java.io.Reader;
@@ -19,6 +20,8 @@ public final class Compiler {
             System.exit(0);
         }
 
+        SimbolTable simbolTable = SimbolTable.getSingletonInstance();
+
         try (Reader reader = FileFactory.create(args[0])) {
             Parser parser = ParserFactory.create(reader);
             parser.parse();
@@ -32,8 +35,9 @@ public final class Compiler {
             System.err.println("Compilation error: " + e.getMessage());
             System.exit(0);
         }
-
         System.out.println("Compilation Successful");
+        System.out.println("Tabla de Simbolos");
+        simbolTable.print();
 
     }
 
