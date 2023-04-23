@@ -41,7 +41,9 @@ terminal WRITE;
 terminal OPEN_CURLY_BRACKET;
 terminal CLOSE_CURLY_BRACKET;
 terminal LESS_THAN;
+terminal LESS_EQUAL_THAN;
 terminal GREATER_THAN;
+terminal GREATER_EQUAL_THAN;
 terminal AND;
 terminal OR;
 terminal NOT;
@@ -106,6 +108,8 @@ comparation ::= expression comparator expression {: System.out.println("Comparat
 
 comparator ::= LESS_THAN {: System.out.println("<"); :};
 comparator ::= GREATER_THAN {: System.out.println(">"); :};
+comparator ::= LESS_EQUAL_THAN {: System.out.println("<="); :};
+comparator ::= GREATER_EQUAL_THAN {: System.out.println(">="); :};
 
 assignment ::= IDENTIFIER ASSIG expression {: System.out.println("Assignment"); :};
 

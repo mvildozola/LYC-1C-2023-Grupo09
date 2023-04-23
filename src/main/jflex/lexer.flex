@@ -52,7 +52,9 @@ Letter = [a-zA-Z]
 Digit = [0-9]
 Comments =  "*-"~"-*"
 LessThan = "<"
+LessEqualThan= "<="
 GreaterThan=">"
+GreaterEqualThan=">="
 And="&"
 Or="||"
 
@@ -110,7 +112,9 @@ FloatConstant = {Digit}*{Dot}{Digit}*
   {OpenCurlyBracket}                        { return symbol(ParserSym.OPEN_CURLY_BRACKET); }
   {CloseCurlyBracket}                       { return symbol(ParserSym.CLOSE_CURLY_BRACKET); }
   {LessThan}                                { return symbol(ParserSym.LESS_THAN); }
+  {LessEqualThan}                           { return symbol(ParserSym.LESS_EQUAL_THAN); }
   {GreaterThan}                             { return symbol(ParserSym.GREATER_THAN); }
+  {GreaterEqualThan}                        { return symbol(ParserSym.GREATER_EQUAL_THAN); }
   {And}                                     { return symbol(ParserSym.AND); }
   {Or}                                      { return symbol(ParserSym.OR); }
   {Comma}                                   { return symbol(ParserSym.COMMA); }
