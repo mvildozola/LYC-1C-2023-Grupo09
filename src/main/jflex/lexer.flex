@@ -58,11 +58,13 @@ Sub = "-"
 Div = "/"
 Assig = "="
 DoubleQuote="\""
+Dot="."
 
 WhiteSpace = {LineTerminator} | {Identation}
 Identifier = {Letter} ({Letter}|{Digit})*
 IntegerConstant = {Digit}+
 StringConstant= \"([^\"\\\\]|\\\\.)*\"
+FloatConstant = {Digit}*{Dot}{Digit}*
 
 
 %%
@@ -84,6 +86,7 @@ StringConstant= \"([^\"\\\\]|\\\\.)*\"
   /* Constants */
   {IntegerConstant}                        { return symbol(ParserSym.INTEGER_CONSTANT, yytext()); }
   {StringConstant}                         { return symbol(ParserSym.STRING_CONSTANT, yytext()); }
+  {FloatConstant}                          { return symbol(ParserSym.FLOAT_CONSTANT, yytext()); }
 
   /* operators */
   {Plus}                                    { return symbol(ParserSym.PLUS); }
@@ -100,11 +103,9 @@ StringConstant= \"([^\"\\\\]|\\\\.)*\"
   {And}                                     { return symbol(ParserSym.AND); }
   {Or}                                      { return symbol(ParserSym.OR); }
 
-
   /* whitespace */
   {WhiteSpace}                              { /* ignore */ }
 }
-
 
 /* error fallback */
 [^]                                         { throw new UnknownCharacterException(yytext()); }
