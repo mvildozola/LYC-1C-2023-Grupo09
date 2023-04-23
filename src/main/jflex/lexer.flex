@@ -47,16 +47,21 @@ Letter = [a-zA-Z]
 Digit = [0-9]
 Comments =  "*-"~"-*"
 LessThan = "<"
+GreaterThan=">"
+And="&"
+Or="|"
 
 Plus = "+"
 Mult = "*"
 Sub = "-"
 Div = "/"
 Assig = "="
+DoubleQuote="\""
 
 WhiteSpace = {LineTerminator} | {Identation}
 Identifier = {Letter} ({Letter}|{Digit})*
 IntegerConstant = {Digit}+
+StringConstant= \"([^\"\\\\]|\\\\.)*\"
 
 
 %%
@@ -76,6 +81,7 @@ IntegerConstant = {Digit}+
   {Identifier}                             { return symbol(ParserSym.IDENTIFIER, yytext()); }
   /* Constants */
   {IntegerConstant}                        { return symbol(ParserSym.INTEGER_CONSTANT, yytext()); }
+  {StringConstant}                         { return symbol(ParserSym.STRING_CONSTANT, yytext()); }
 
   /* operators */
   {Plus}                                    { return symbol(ParserSym.PLUS); }
@@ -87,7 +93,11 @@ IntegerConstant = {Digit}+
   {CloseBracket}                            { return symbol(ParserSym.CLOSE_BRACKET); }
   {OpenCurlyBracket}                        { return symbol(ParserSym.OPEN_CURLY_BRACKET); }
   {CloseCurlyBracket}                       { return symbol(ParserSym.CLOSE_CURLY_BRACKET); }
-  {LessThan}                                { return symbol(ParserSym.LESS_THAN); }  
+  {LessThan}                                { return symbol(ParserSym.LESS_THAN); }
+  {GreaterThan}                             { return symbol(ParserSym.GREATER_THAN); }
+  {And}                                     { return symbol(ParserSym.AND); }
+  {Or}                                      { return symbol(ParserSym.OR); }
+
 
   /* whitespace */
   {WhiteSpace}                              { /* ignore */ }
