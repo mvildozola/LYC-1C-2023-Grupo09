@@ -38,6 +38,7 @@ If="if"
 Else= "else"
 Read= "read"
 Write="write"
+Not="not"
 
 OpenBracket = "("
 CloseBracket = ")"
@@ -49,7 +50,7 @@ Comments =  "*-"~"-*"
 LessThan = "<"
 GreaterThan=">"
 And="&"
-Or="|"
+Or="||"
 
 Plus = "+"
 Mult = "*"
@@ -78,6 +79,7 @@ StringConstant= \"([^\"\\\\]|\\\\.)*\"
   {Else}                                   { return symbol(ParserSym.ELSE); }
   {Read}                                   { return symbol(ParserSym.READ); }
   {Write}                                  { return symbol(ParserSym.WRITE); }
+  {Not}                                    { return symbol(ParserSym.NOT); }
   {Identifier}                             { return symbol(ParserSym.IDENTIFIER, yytext()); }
   /* Constants */
   {IntegerConstant}                        { return symbol(ParserSym.INTEGER_CONSTANT, yytext()); }
