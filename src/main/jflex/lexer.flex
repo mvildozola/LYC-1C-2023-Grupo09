@@ -36,6 +36,8 @@ Identation =  [ \t\f]
 While = "ciclo"
 If="if"
 Else= "else"
+Read= "read"
+Write="write"
 
 OpenBracket = "("
 CloseBracket = ")"
@@ -69,6 +71,8 @@ IntegerConstant = {Digit}+
   {While}                                  { return symbol(ParserSym.WHILE); }  
   {If}                                     { return symbol(ParserSym.IF); } 
   {Else}                                   { return symbol(ParserSym.ELSE); }
+  {Read}                                   { return symbol(ParserSym.READ); }
+  {Write}                                  { return symbol(ParserSym.WRITE); }
   {Identifier}                             { return symbol(ParserSym.IDENTIFIER, yytext()); }
   /* Constants */
   {IntegerConstant}                        { return symbol(ParserSym.INTEGER_CONSTANT, yytext()); }
