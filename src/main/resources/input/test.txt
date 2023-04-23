@@ -19,3 +19,6 @@ else
 }
 *-holamundo-*
 
+base = 1
+read(base)
+write(base)
