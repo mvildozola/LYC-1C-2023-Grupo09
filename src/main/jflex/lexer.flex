@@ -20,6 +20,10 @@ import static lyc.compiler.constants.Constants.*;
 
 
 %{
+  int IDENTIFIER_RANGE = 40;
+  int INTEGER_RANGE = (int) (Math.pow(2, 16)-1);
+  float FLOAT_RANGE = (float) (Math.pow(2, 32)-1);
+  int STRING_RANGE = 50;
   private Symbol symbol(int type) {
     return new Symbol(type, yyline, yycolumn);
   }
@@ -95,11 +99,48 @@ FloatConstant = {Digit}*{Dot}{Digit}*
   {String}                                 { return symbol(ParserSym.STRING); }
   {Int}                                    { return symbol(ParserSym.INT); }
   {Init}                                   { return symbol(ParserSym.INIT); }
-  {Identifier}                             { return symbol(ParserSym.IDENTIFIER, yytext()); }
+  {Identifier}          {
+                          String id = new String(yytext());
+                          int length = id.length();
+
+                          if(length <= IDENTIFIER_RANGE ){
+                            return symbol(ParserSym.IDENTIFIER, yytext());
+                          }
+                          else {
+                            throw new Error("El identificador [" + yytext() + "] excede el limite de caracteres."); 
+                          }
+                        }
   /* Constants */
-  {IntegerConstant}                        { return symbol(ParserSym.INTEGER_CONSTANT, yytext()); }
-  {StringConstant}                         { return symbol(ParserSym.STRING_CONSTANT, yytext()); }
-  {FloatConstant}                          { return symbol(ParserSym.FLOAT_CONSTANT, yytext()); }
+  {IntegerConstant}     {
+                          Integer constInt = Integer.parseInt(yytext());
+
+                          if(Math.abs(constInt) <= INTEGER_RANGE ){
+                            return symbol(ParserSym.INTEGER_CONSTANT, yytext());
+                          }                                          
+                          else
+                          {
+                            throw new Error("La constante [" + yytext() + "] esta fuera del rango de los enteros."); 
+                          }
+                        }
+  {StringConstant}      {
+                          String constString = new String(yytext());
+                          // Se borran las dos comillas.
+                          if (constString.length() -2 <= STRING_RANGE)
+                            return symbol(ParserSym.STRING_CONSTANT, yytext());
+                          else
+                          {
+                            throw new Error("La constante [" + yytext() + "] excede el largo permitido para un string.");
+                          }
+                        }
+  {FloatConstant}       {
+                          Double constFloat = Double.parseDouble(yytext());
+                          if (Math.abs(constFloat) <= FLOAT_RANGE)
+                            return symbol(ParserSym.FLOAT_CONSTANT, yytext());
+                          else
+                          {
+                            throw new Error("La constante [" + yytext() + "] esta fuera del limite de los flotantes.");
+                          }
+                        }
 
   /* operators */
   {Plus}                                    { return symbol(ParserSym.PLUS); }
