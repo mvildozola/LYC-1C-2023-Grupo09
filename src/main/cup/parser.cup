@@ -7,15 +7,27 @@ import lyc.compiler.simbolsTable.SimbolRow;
 import lyc.compiler.simbolsTable.DataType;
 
 class Parser;
-
-action code
-{:
+action code{:
     public SimbolTable simbolTable = SimbolTable.getSingletonInstance();
     public ArrayList<String> identifiersList = new ArrayList();
+    ArrayList<Object> element = new ArrayList<Object>();
+    int medio;
+    public void agregar_a_lista(Object elem)  {
+            element.add(elem);
+        }
+
+    public int ElementInTheMiddle()  {
+                int posicion_medio;
+                Object valor_medio;
+    
+    if(element.size() % 2 == 0)
+        throw new Error("ElementInTheMiddle: La cantidad de elementos debe ser impar\n");
+    element.clear();
+    return 0;
+    }
 :}
 
-parser code
-{:
+parser code{:
     public List<SimbolRow> getListaSimbolos() {
         return action_obj.simbolTable.getListaSimbolos();
     }
@@ -84,15 +96,15 @@ block ::= block sentence {: System.out.println("Blocks"); :};
 
 sentence ::= assignment {: System.out.println("End Sentence"); :};
 
-sentence ::= IDENTIFIER:id ASSIG ELEMENT_IN_THE_MIDDLE OPEN_BRACKET params CLOSE_BRACKET {: System.out.println("ElementInTheMiddle"); :};
+sentence ::= IDENTIFIER:id ASSIG ELEMENT_IN_THE_MIDDLE OPEN_BRACKET params CLOSE_BRACKET {: ElementInTheMiddle();System.out.println("ElementInTheMiddle"); :};
 
-params ::= element  {: System.out.println("Elemento"); :};
-params ::= params COMMA element {: System.out.println("Elemento"); :};
+params ::= element  {: System.out.println("Param"); :};
+params ::= params COMMA element {: System.out.println("Params"); :};
 
-element ::= IDENTIFIER:id  {: System.out.println("valor elemento"); :};
-element ::= INTEGER_CONSTANT:constant {: System.out.println("valor elemento"); :};
-element ::= STRING_CONSTANT:constant {: System.out.println("valor elemento"); :};
-element ::= FLOAT_CONSTANT:constant {: System.out.println("valor elemento"); :};
+element ::= IDENTIFIER:id  {: agregar_a_lista(id);System.out.println(id); :};
+element ::= INTEGER_CONSTANT:constant {: agregar_a_lista(constant);System.out.println("Param"); :};
+element ::= STRING_CONSTANT:constant {: agregar_a_lista(constant);System.out.println("Param"); :};
+element ::= FLOAT_CONSTANT:constant {: agregar_a_lista(constant);System.out.println("Param"); :};
 
 sentence ::= iteration {: System.out.println("Sentence interation"); :};
 
