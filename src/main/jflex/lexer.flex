@@ -21,7 +21,8 @@ import static lyc.compiler.constants.Constants.*;
 
 %{
   int IDENTIFIER_RANGE = 40;
-  int INTEGER_RANGE = 32767;
+  int INTEGER_RANGE = (int) (Math.pow(2, 16)-1);
+  float FLOAT_RANGE = (float) (Math.pow(2, 32)-1);
   private Symbol symbol(int type) {
     return new Symbol(type, yyline, yycolumn);
   }
@@ -121,7 +122,15 @@ FloatConstant = {Digit}*{Dot}{Digit}*
                           }
                         }
   {StringConstant}                         { return symbol(ParserSym.STRING_CONSTANT, yytext()); }
-  {FloatConstant}                          { return symbol(ParserSym.FLOAT_CONSTANT, yytext()); }
+  {FloatConstant}       {
+                          Double constFloat = Double.parseDouble(yytext());
+                          if (Math.abs(constFloat) <= FLOAT_RANGE)
+                            return symbol(ParserSym.FLOAT_CONSTANT, yytext());
+                          else
+                          {
+                            throw new Error("La constante [" + yytext() + "] esta fuera del limite de los flotantes.");
+                          }
+                        }
 
   /* operators */
   {Plus}                                    { return symbol(ParserSym.PLUS); }
