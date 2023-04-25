@@ -47,6 +47,7 @@ Init="init"
 Float="Float"
 String="String"
 Int="Int"
+ElemntInTheMiddle="ElementInTheMiddle"
 
 OpenBracket = "("
 CloseBracket = ")"
@@ -99,6 +100,8 @@ FloatConstant = {Digit}*{Dot}{Digit}*
   {String}                                 { return symbol(ParserSym.STRING); }
   {Int}                                    { return symbol(ParserSym.INT); }
   {Init}                                   { return symbol(ParserSym.INIT); }
+  {ElemntInTheMiddle}                      { return symbol(ParserSym.ELEMENT_IN_THE_MIDDLE); }
+
   {Identifier}          {
                           String id = new String(yytext());
                           int length = id.length();

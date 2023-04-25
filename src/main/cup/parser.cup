@@ -53,6 +53,7 @@ terminal FLOAT;
 terminal STRING;
 terminal INT;
 terminal COMMA;
+terminal ELEMENT_IN_THE_MIDDLE;
 
 // Non Terminals
 non terminal sentence;
@@ -70,6 +71,8 @@ non terminal initiation;
 non terminal declare;
 non terminal variable;
 non terminal program;
+non terminal params;
+non terminal element;
 
 // Start Symbol Definition
 start with program;
@@ -80,6 +83,16 @@ block ::= sentence {: System.out.println("Block"); :};
 block ::= block sentence {: System.out.println("Blocks"); :};
 
 sentence ::= assignment {: System.out.println("End Sentence"); :};
+
+sentence ::= IDENTIFIER:id ASSIG ELEMENT_IN_THE_MIDDLE OPEN_BRACKET params CLOSE_BRACKET {: System.out.println("ElementInTheMiddle"); :};
+
+params ::= element  {: System.out.println("Elemento"); :};
+params ::= params COMMA element {: System.out.println("Elemento"); :};
+
+element ::= IDENTIFIER:id  {: System.out.println("valor elemento"); :};
+element ::= INTEGER_CONSTANT:constant {: System.out.println("valor elemento"); :};
+element ::= STRING_CONSTANT:constant {: System.out.println("valor elemento"); :};
+element ::= FLOAT_CONSTANT:constant {: System.out.println("valor elemento"); :};
 
 sentence ::= iteration {: System.out.println("Sentence interation"); :};
 
