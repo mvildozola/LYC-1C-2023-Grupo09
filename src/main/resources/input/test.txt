@@ -1,4 +1,3 @@
-
 init {
     variable1 : Int
     variable2 : String
@@ -57,3 +56,7 @@ d = "asldk  fh sjf"
 d = "@sdADaSjfla%dfg"
 a = 1
 e = 1.1
+
+*-x = ElementInTheMiddle(a, b, 1, 1.0, d, 99, 100, 5,e)-*
+x = ElementInTheMiddle(1)
+x = ElementInTheMiddle( a , c , b )
