@@ -23,6 +23,7 @@ import static lyc.compiler.constants.Constants.*;
   int IDENTIFIER_RANGE = 40;
   int INTEGER_RANGE = (int) (Math.pow(2, 16)-1);
   float FLOAT_RANGE = (float) (Math.pow(2, 32)-1);
+  int STRING_RANGE = 50;
   private Symbol symbol(int type) {
     return new Symbol(type, yyline, yycolumn);
   }
@@ -121,7 +122,16 @@ FloatConstant = {Digit}*{Dot}{Digit}*
                             throw new Error("La constante [" + yytext() + "] esta fuera del rango de los enteros."); 
                           }
                         }
-  {StringConstant}                         { return symbol(ParserSym.STRING_CONSTANT, yytext()); }
+  {StringConstant}      {
+                          String constString = new String(yytext());
+                          // Se borran las dos comillas.
+                          if (constString.length() -2 <= STRING_RANGE)
+                            return symbol(ParserSym.STRING_CONSTANT, yytext());
+                          else
+                          {
+                            throw new Error("La constante [" + yytext() + "] excede el largo permitido para un string.");
+                          }
+                        }
   {FloatConstant}       {
                           Double constFloat = Double.parseDouble(yytext());
                           if (Math.abs(constFloat) <= FLOAT_RANGE)
