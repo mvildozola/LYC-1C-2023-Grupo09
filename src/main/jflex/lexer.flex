@@ -21,6 +21,7 @@ import static lyc.compiler.constants.Constants.*;
 
 %{
   int IDENTIFIER_RANGE = 40;
+  int INTEGER_RANGE = 32767;
   private Symbol symbol(int type) {
     return new Symbol(type, yyline, yycolumn);
   }
@@ -108,7 +109,17 @@ FloatConstant = {Digit}*{Dot}{Digit}*
                           }
                         }
   /* Constants */
-  {IntegerConstant}                        { return symbol(ParserSym.INTEGER_CONSTANT, yytext()); }
+  {IntegerConstant}     {
+                          Integer constInt = Integer.parseInt(yytext());
+
+                          if(Math.abs(constInt) <= INTEGER_RANGE ){
+                            return symbol(ParserSym.INTEGER_CONSTANT, yytext());
+                          }                                          
+                          else
+                          {
+                            throw new Error("La constante [" + yytext() + "] esta fuera del rango de los enteros."); 
+                          }
+                        }
   {StringConstant}                         { return symbol(ParserSym.STRING_CONSTANT, yytext()); }
   {FloatConstant}                          { return symbol(ParserSym.FLOAT_CONSTANT, yytext()); }
 
