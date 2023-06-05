@@ -7,9 +7,11 @@ import lyc.compiler.simbolsTable.SimbolRow;
 import lyc.compiler.simbolsTable.DataType;
 import lyc.compiler.tercetos.Tercetos;
 import lyc.compiler.tercetos.Terceto;
+import java.util.Stack;
 
 class Parser;
 action code{:
+    Stack<Integer> stack = new Stack<Integer>();
     public SimbolTable simbolTable = SimbolTable.getSingletonInstance();
     public ArrayList<String> identifiersList = new ArrayList();
     ArrayList<Object> element = new ArrayList<Object>();
@@ -37,6 +39,13 @@ Integer indexExpression = -1;
 Integer indexTerm = -1;
 Integer indexAssignment = -1;
 Integer indexComparator = -1;
+Integer indexRead = -1;
+Integer indexWrite = -1;
+Integer indexExpressionLeft = -1;
+Integer indexExpressionRight = -1;
+Integer indexComparation = -1;
+
+
 :}
 
 parser code{:
@@ -126,14 +135,40 @@ sentence ::= iteration {: System.out.println("Sentence interation"); :};
 
 sentence ::= selection {: System.out.println("Sentence selecction"); :};
 
-sentence ::= READ OPEN_BRACKET IDENTIFIER CLOSE_BRACKET {: System.out.println("Read"); :};
+sentence ::= READ OPEN_BRACKET IDENTIFIER CLOSE_BRACKET 
+{: 
+    System.out.println("Read"); 
+    indexRead = tercetos.create("Read", indexExpression.toString(), "");
+:};
 
-sentence ::= WRITE OPEN_BRACKET STRING_CONSTANT CLOSE_BRACKET {: System.out.println("Write string constant"); :};
-sentence ::= WRITE OPEN_BRACKET IDENTIFIER CLOSE_BRACKET {: System.out.println("Write"); :};
+sentence ::= WRITE OPEN_BRACKET STRING_CONSTANT CLOSE_BRACKET 
+{: 
+    System.out.println("Write string constant"); 
+    indexWrite = tercetos.create("Write", indexExpression.toString(), "");
+:};
 
-iteration ::= WHILE OPEN_BRACKET condition CLOSE_BRACKET OPEN_CURLY_BRACKET block CLOSE_CURLY_BRACKET {:System.out.println("While"); :};
+sentence ::= WRITE OPEN_BRACKET IDENTIFIER CLOSE_BRACKET 
+{: 
+    System.out.println("Write"); 
+    indexWrite = tercetos.create("Write", indexExpression.toString(), "");
+:};
 
-selection ::= IF OPEN_BRACKET condition CLOSE_BRACKET OPEN_CURLY_BRACKET block CLOSE_CURLY_BRACKET {:System.out.println("If"); :};
+iteration ::= WHILE OPEN_BRACKET condition 
+CLOSE_BRACKET OPEN_CURLY_BRACKET block CLOSE_CURLY_BRACKET 
+{: 
+    System.out.println("While"); 
+    Integer indexToUpdate = stack.pop();
+    Integer value = tercetos.size() + 1;
+    tercetos.update(indexToUpdate, value);
+:};
+
+selection ::= IF OPEN_BRACKET condition CLOSE_BRACKET OPEN_CURLY_BRACKET block CLOSE_CURLY_BRACKET 
+{:
+    System.out.println("If"); 
+    Integer indexToUpdate = stack.pop();
+    Integer value = tercetos.size() + 1;
+    tercetos.update(indexToUpdate, value);
+:};
 
 selection ::= IF OPEN_BRACKET condition CLOSE_BRACKET OPEN_CURLY_BRACKET block CLOSE_CURLY_BRACKET ELSE OPEN_CURLY_BRACKET block CLOSE_CURLY_BRACKET {:System.out.println("If with Else"); :};
 
@@ -145,12 +180,27 @@ condition ::= comparation AND comparation {: System.out.println("And"); :};
 
 condition ::= comparation OR comparation {: System.out.println("And"); :};
 
-comparation ::= expression comparator expression {: System.out.println("Comparation"); :};
+comparation ::= expression 
+{: 
+    System.out.println("Comparation");
+    indexExpressionLeft = indexExpression;
+:}
+comparator expression 
+{: 
+    System.out.println("Comparation");
+    indexExpressionRight = indexExpression;
+    indexComparation = tercetos.create("CMP", indexExpressionLeft, indexExpressionRight);
+    
+    String cpm = tercetos.getValue(indexComparator);
+    Integer indexToUpdate = tercetos.create(cpm, "", "");
+    System.out.println("indexToUpdate: " + indexToUpdate);
+    stack.push(indexToUpdate);
+:};
 
-comparator ::= LESS_THAN {: System.out.println("<"); indexComparator = tercetos.create("<", "", ""); :};
-comparator ::= GREATER_THAN {: System.out.println(">"); indexComparator = tercetos.create(">", "", ""); :};
-comparator ::= LESS_EQUAL_THAN {: System.out.println("<="); indexComparator = tercetos.create("<=", "", ""); :};
-comparator ::= GREATER_EQUAL_THAN {: System.out.println(">="); indexComparator = tercetos.create(">=", "", ""); :};
+comparator ::= LESS_THAN {: System.out.println("<"); indexComparator = tercetos.create("BGE", "", ""); :};
+comparator ::= GREATER_THAN {: System.out.println(">"); indexComparator = tercetos.create("BLE", "", ""); :};
+comparator ::= LESS_EQUAL_THAN {: System.out.println("<="); indexComparator = tercetos.create("BGT", "", ""); :};
+comparator ::= GREATER_EQUAL_THAN {: System.out.println(">="); indexComparator = tercetos.create("BLT", "", ""); :};
 
 assignment ::= IDENTIFIER ASSIG expression 
 {: 
@@ -192,7 +242,6 @@ factor ::= IDENTIFIER:id
 {: 
     System.out.println("Id: " + id);
     indexFactor = tercetos.create(id.toString(), "", "");
-    //System.out.println("indexId:" + indexFactor);
 :};
 factor ::= INTEGER_CONSTANT:constant 
 {: 

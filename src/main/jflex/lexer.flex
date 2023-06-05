@@ -62,7 +62,6 @@ GreaterThan=">"
 GreaterEqualThan=">="
 And="&"
 Or="||"
-
 Plus = "+"
 Mult = "*"
 Sub = "-"
