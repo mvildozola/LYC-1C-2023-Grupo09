@@ -2,5 +2,8 @@ init {
     variable1 : Int
 }
 
-a = 10 
-b = a * 1 - 2
+ciclo(1>=2)
+{
+    a = 1
+    b = 2
+}
