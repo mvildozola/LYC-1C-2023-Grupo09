@@ -11,11 +11,16 @@ public class Tercetos {
         return tercetos.size();
     }
 
+    public Integer create(String param1, Integer param2, Integer param3) {
+      tercetos.add(new Terceto(param1, "[" + param2 + "]", "[" + param3 + "]"));
+      return tercetos.size();
+  }
+
     public void print() {
       System.out.println("Intermedia:");
         for (Terceto row : tercetos) {
           System.out.println(
-            String.format("%-20s\n",
+            String.format("%-20s",
             row.terceto()
           ));
         }
