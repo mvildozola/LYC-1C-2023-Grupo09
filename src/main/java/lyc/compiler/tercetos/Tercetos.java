@@ -44,6 +44,26 @@ public class Tercetos {
       return tercetos.get(index -1).getElement1();
     }
 
+    public String ConvertToAssembler(String i)
+    {
+      String retVal = "";
+      switch(i) {
+        case "<":
+          retVal = "BGE";
+          break;
+        case ">":
+          retVal = "BLE";
+        case "<=":
+          retVal = "BGT";
+          break;
+        case ">=":
+          retVal = "BLT";
+          break;
+        default:break;
+      }
+      return retVal;
+    }
+
     public void print() {
       int index = 1;
       System.out.println("Intermedia:");
