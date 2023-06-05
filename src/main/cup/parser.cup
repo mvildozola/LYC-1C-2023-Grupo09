@@ -36,6 +36,7 @@ Integer indexFactor = -1;
 Integer indexExpression = -1;
 Integer indexTerm = -1;
 Integer indexAssignment = -1;
+Integer indexComparator = -1;
 :}
 
 parser code{:
@@ -146,10 +147,10 @@ condition ::= comparation OR comparation {: System.out.println("And"); :};
 
 comparation ::= expression comparator expression {: System.out.println("Comparation"); :};
 
-comparator ::= LESS_THAN {: System.out.println("<"); :};
-comparator ::= GREATER_THAN {: System.out.println(">"); :};
-comparator ::= LESS_EQUAL_THAN {: System.out.println("<="); :};
-comparator ::= GREATER_EQUAL_THAN {: System.out.println(">="); :};
+comparator ::= LESS_THAN {: System.out.println("<"); indexComparator = tercetos.create("<", "", ""); :};
+comparator ::= GREATER_THAN {: System.out.println(">"); indexComparator = tercetos.create(">", "", ""); :};
+comparator ::= LESS_EQUAL_THAN {: System.out.println("<="); indexComparator = tercetos.create("<=", "", ""); :};
+comparator ::= GREATER_EQUAL_THAN {: System.out.println(">="); indexComparator = tercetos.create(">=", "", ""); :};
 
 assignment ::= IDENTIFIER ASSIG expression 
 {: 
@@ -162,14 +163,26 @@ expression ::= expression PLUS term
     System.out.println("+");
     indexExpression = tercetos.create("+", indexFactor, indexExpression);
 :};
-expression ::= expression SUB term {: System.out.println("-"); :};
+expression ::= expression SUB term 
+{: 
+    System.out.println("-"); 
+    indexExpression = tercetos.create("-", indexFactor, indexExpression);
+:};
 expression ::= term 
 {: 
     System.out.println("Expression = Term"); 
     indexExpression = indexTerm;
 :};
-term ::= term MULT factor {: System.out.println("*"); :};
-term ::= term DIV factor {: System.out.println("/"); :};
+term ::= term MULT factor 
+{: 
+    System.out.println("*"); 
+    indexTerm = tercetos.create("*", indexTerm, indexFactor);
+:};
+term ::= term DIV factor 
+{: 
+    System.out.println("/"); 
+    indexTerm = tercetos.create("/", indexTerm, indexFactor);
+:};
 term ::= factor 
 {: 
     System.out.println("Term = factor"); 
@@ -179,7 +192,7 @@ factor ::= IDENTIFIER:id
 {: 
     System.out.println("Id: " + id);
     indexFactor = tercetos.create(id.toString(), "", "");
-    System.out.println("indexId:" + indexFactor);
+    //System.out.println("indexId:" + indexFactor);
 :};
 factor ::= INTEGER_CONSTANT:constant 
 {: 
