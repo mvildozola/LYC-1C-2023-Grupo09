@@ -44,12 +44,6 @@ public class SimbolTable {
     }
   }
 
-  // public void add(String nombre, String tipo, String valor, Integer longitud) {
-  //   if (!isInTable(nombre)) {
-  //       this.simbols.add(new SimbolRow(nombre, tipo, valor, longitud));
-  //   }
-  // }
-
   public void addIdentifiers(ArrayList<String> identifiers, DataType dataType) {
     Iterator<String> i = identifiers.iterator();
     while (i.hasNext()) {

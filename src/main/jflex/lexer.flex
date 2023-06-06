@@ -22,7 +22,9 @@ import static lyc.compiler.constants.Constants.*;
 %{
   int IDENTIFIER_RANGE = 40;
   int INTEGER_RANGE = (int) (Math.pow(2, 16)-1);
+  int INTEGER_RANGE_MIN = -32768;
   float FLOAT_RANGE = (float) (Math.pow(2, 32)-1);
+  float FLOAT_RANGE_MIN = -Float.MAX_VALUE;
   int STRING_RANGE = 50;
   private Symbol symbol(int type) {
     return new Symbol(type, yyline, yycolumn);
@@ -116,7 +118,7 @@ FloatConstant = {Digit}*{Dot}{Digit}*
   {IntegerConstant}     {
                           Integer constInt = Integer.parseInt(yytext());
 
-                          if(Math.abs(constInt) <= INTEGER_RANGE ){
+                          if(Math.abs(constInt) <= INTEGER_RANGE && Math.abs(constInt) >= INTEGER_RANGE_MIN ){
                             return symbol(ParserSym.INTEGER_CONSTANT, yytext());
                           }                                          
                           else
@@ -136,7 +138,7 @@ FloatConstant = {Digit}*{Dot}{Digit}*
                         }
   {FloatConstant}       {
                           Double constFloat = Double.parseDouble(yytext());
-                          if (Math.abs(constFloat) <= FLOAT_RANGE)
+                          if (Math.abs(constFloat) <= FLOAT_RANGE && Math.abs(constFloat) >= FLOAT_RANGE_MIN)
                             return symbol(ParserSym.FLOAT_CONSTANT, yytext());
                           else
                           {
