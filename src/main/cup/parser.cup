@@ -12,6 +12,7 @@ import java.util.Stack;
 class Parser;
 action code{:
     Stack<Integer> stack = new Stack<Integer>();
+    DataType tipo;
     Stack<Object> elementMiddle = new Stack<Object>();
     public SimbolTable simbolTable = SimbolTable.getSingletonInstance();
     public ArrayList<String> identifiersList = new ArrayList();
@@ -324,7 +325,23 @@ initiation ::= INIT OPEN_CURLY_BRACKET declare CLOSE_CURLY_BRACKET;
 declare ::= variable;
 declare ::= declare variable;
 
-variable ::= IDENTIFIER:id DOUBLE_POINTS INT {: simbolTable.add(""+id, DataType.INT, null, null); :};
-variable ::= IDENTIFIER:id DOUBLE_POINTS STRING {: simbolTable.add(""+id, DataType.STRING, null, null); :};
-variable ::= IDENTIFIER:id DOUBLE_POINTS FLOAT {: simbolTable.add(""+id, DataType.FLOAT, null, null); :};
-variable ::= IDENTIFIER COMMA variable;
+variable ::= IDENTIFIER:id DOUBLE_POINTS INT 
+{: 
+    simbolTable.add(""+id, DataType.INT, null, null); 
+    tipo = DataType.INT;
+:};
+variable ::= IDENTIFIER:id DOUBLE_POINTS STRING 
+{: 
+    simbolTable.add(""+id, DataType.STRING, null, null); 
+    tipo = DataType.STRING;
+:};
+variable ::= IDENTIFIER:id DOUBLE_POINTS FLOAT 
+{: 
+    simbolTable.add(""+id, DataType.FLOAT, null, null); 
+    tipo = DataType.FLOAT;
+:};
+variable ::= IDENTIFIER:id COMMA variable 
+{: 
+    System.out.println("variable");
+    simbolTable.add(""+id, tipo, null, null); 
+:};
