@@ -303,19 +303,19 @@ factor ::= IDENTIFIER:id
 factor ::= INTEGER_CONSTANT:constant 
 {: 
     System.out.println("Constant integer: " + constant );
-    simbolTable.add("_"+constant, DataType.INT, constant.toString(), null);
+    simbolTable.add("_"+constant, DataType.INT, constant.toString(), constant.toString().length());
     indexFactor = tercetos.create(constant.toString(), "", "");
 :};
 factor ::= STRING_CONSTANT:constant  
 {: 
     System.out.println("Constant string: " + constant );
-    simbolTable.add("_"+constant, DataType.STRING, constant.toString(), null);
+    simbolTable.add("_"+constant, DataType.STRING, constant.toString(), constant.toString().length());
     indexFactor = tercetos.create(constant.toString(), "", "");
 :};
 factor ::= FLOAT_CONSTANT:constant   
 {: 
     System.out.println("Constant float: " + constant ); 
-    simbolTable.add("_"+constant, DataType.FLOAT, constant.toString(), null);
+    simbolTable.add("_"+constant, DataType.FLOAT, constant.toString(), constant.toString().length());
     indexFactor = tercetos.create(constant.toString(), "", "");
 :};
 factor ::= OPEN_BRACKET expression CLOSE_BRACKET {: System.out.println("Factor = (Expression)"); :};
