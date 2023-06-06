@@ -12,13 +12,13 @@ import java.util.Stack;
 class Parser;
 action code{:
     Stack<Integer> stack = new Stack<Integer>();
+    Stack<Object> elementMiddle = new Stack<Object>();
     public SimbolTable simbolTable = SimbolTable.getSingletonInstance();
     public ArrayList<String> identifiersList = new ArrayList();
     ArrayList<Object> element = new ArrayList<Object>();
     int medio;
 
-    public Tercetos tercetos = new Tercetos();
-
+    public Tercetos tercetos = Tercetos.getSingletonInstance();
 
     public void agregar_a_lista(Object elem)  {
             element.add(elem);
@@ -120,17 +120,41 @@ program ::= initiation block
 block ::= sentence {: System.out.println("Block"); :};
 block ::= block sentence {: System.out.println("Blocks"); :};
 
-sentence ::= assignment {: System.out.println("End Sentence"); :};
+sentence ::= IDENTIFIER:id 
+{: 
+    System.out.println("Identifier"); 
+    indexIdentifier = tercetos.create(id.toString(), "", "");
+:} assignment {: System.out.println("End Sentence"); :};
 
-//sentence ::= IDENTIFIER:id ASSIG ELEMENT_IN_THE_MIDDLE OPEN_BRACKET params CLOSE_BRACKET {: ElementInTheMiddle();System.out.println("ElementInTheMiddle"); :};
+params ::= element 
+{: 
+    System.out.println("Param");
+:};
+params ::= params COMMA element 
+{: 
+    System.out.println("Params"); 
+:};
 
-params ::= element  {: System.out.println("Param"); :};
-params ::= params COMMA element {: System.out.println("Params"); :};
-
-element ::= IDENTIFIER:id  {: agregar_a_lista(id);System.out.println(id); :};
-element ::= INTEGER_CONSTANT:constant {: agregar_a_lista(constant);System.out.println("Param"); :};
-element ::= STRING_CONSTANT:constant {: agregar_a_lista(constant);System.out.println("Param"); :};
-element ::= FLOAT_CONSTANT:constant {: agregar_a_lista(constant);System.out.println("Param"); :};
+element ::= IDENTIFIER:id  
+{: 
+    agregar_a_lista(id);System.out.println(id); 
+    elementMiddle.push(id);
+:};
+element ::= INTEGER_CONSTANT:constant 
+{: 
+    agregar_a_lista(constant);System.out.println("Param");
+    elementMiddle.push(constant);
+:};
+element ::= STRING_CONSTANT:constant 
+{: 
+    agregar_a_lista(constant);System.out.println("Param"); 
+    elementMiddle.push(constant);
+:};
+element ::= FLOAT_CONSTANT:constant 
+{: 
+    agregar_a_lista(constant);System.out.println("Param"); 
+    elementMiddle.push(constant);
+:};
 
 sentence ::= iteration {: System.out.println("Sentence interation"); :};
 
@@ -139,19 +163,19 @@ sentence ::= selection {: System.out.println("Sentence selecction"); :};
 sentence ::= READ OPEN_BRACKET IDENTIFIER CLOSE_BRACKET 
 {: 
     System.out.println("Read"); 
-    indexRead = tercetos.create("Read", indexExpression.toString(), "");
+    indexRead = tercetos.create("Read", indexExpression, "");
 :};
 
 sentence ::= WRITE OPEN_BRACKET STRING_CONSTANT CLOSE_BRACKET 
 {: 
     System.out.println("Write string constant"); 
-    indexWrite = tercetos.create("Write", indexExpression.toString(), "");
+    indexWrite = tercetos.create("Write", indexExpression, "");
 :};
 
 sentence ::= WRITE OPEN_BRACKET IDENTIFIER CLOSE_BRACKET 
 {: 
     System.out.println("Write"); 
-    indexWrite = tercetos.create("Write", indexExpression.toString(), "");
+    indexWrite = tercetos.create("Write", indexExpression, "");
 :};
 
 iteration ::= WHILE OPEN_BRACKET condition 
@@ -171,7 +195,29 @@ selection ::= IF OPEN_BRACKET condition CLOSE_BRACKET OPEN_CURLY_BRACKET block C
     tercetos.update(indexToUpdate, value);
 :};
 
-selection ::= IF OPEN_BRACKET condition CLOSE_BRACKET OPEN_CURLY_BRACKET block CLOSE_CURLY_BRACKET ELSE OPEN_CURLY_BRACKET block CLOSE_CURLY_BRACKET {:System.out.println("If with Else"); :};
+selection ::= IF OPEN_BRACKET condition CLOSE_BRACKET OPEN_CURLY_BRACKET block CLOSE_CURLY_BRACKET 
+{:
+    System.out.println("If 1"); 
+    Integer indexToUpdate = stack.pop();
+    Integer value = tercetos.size() + 2;
+    tercetos.update(indexToUpdate, value);
+    stack.push(value);
+:}
+ELSE OPEN_CURLY_BRACKET
+{: 
+    System.out.println("Else"); 
+    Integer indexToUpdate = stack.pop();
+    Integer value = tercetos.size() + 2;
+    Integer indexBi = tercetos.create("BI", "", "");
+    stack.push(indexBi);
+:} 
+block CLOSE_CURLY_BRACKET 
+{:
+    System.out.println("If with Else"); 
+    Integer indexToUpdate = stack.pop();
+    Integer value = tercetos.size() + 1;
+    tercetos.update(indexToUpdate, value);
+:};
 
 condition ::= comparation {: System.out.println("Condition"); :};
 
@@ -203,12 +249,16 @@ comparator ::= GREATER_THAN {: System.out.println(">"); indexComparator = tercet
 comparator ::= LESS_EQUAL_THAN {: System.out.println("<="); indexComparator = tercetos.create("<=", "", ""); :};
 comparator ::= GREATER_EQUAL_THAN {: System.out.println(">="); indexComparator = tercetos.create(">=", "", ""); :};
 
-assignment ::= IDENTIFIER:id
+assignment ::= ASSIG ELEMENT_IN_THE_MIDDLE OPEN_BRACKET params CLOSE_BRACKET 
 {: 
-    System.out.println("IDENTIFIER"); 
-    indexIdentifier = tercetos.create(id.toString(), "", "");
-:}
-ASSIG expression 
+    System.out.println("ElementInTheMiddle"); 
+    ElementInTheMiddle();
+    Object element = elementMiddle.pop();
+    Integer index = tercetos.create(element.toString(), "", "");
+    indexAssignment = tercetos.create("=", indexIdentifier, index);
+:};
+
+assignment ::= ASSIG expression 
 {: 
     System.out.println("Assignment"); 
     indexAssignment = tercetos.create("=", indexIdentifier, indexExpression);
