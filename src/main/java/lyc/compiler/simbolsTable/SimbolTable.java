@@ -86,8 +86,8 @@ public Boolean isInTable(String nombre) {
     for (SimbolRow row : simbols) {
       result += 
       String.format("%-20s%-20s%-20s%-20s\n",
-      row.getId(),
       row.getNombre(),
+      row.getId(),
       row.getValor(), row.getLongitud() == null? "" : row.getLongitud()
       );
     }
