@@ -47,6 +47,7 @@ Integer indexExpressionRight = -1;
 Integer indexComparation = -1;
 Integer indexIdentifier = -1;
 
+String comparatorSimbol;
 
 :}
 
@@ -239,16 +240,16 @@ comparator expression
     indexExpressionRight = indexExpression;
     indexComparation = tercetos.create("CMP", indexExpressionLeft, indexExpressionRight);
     
-    String cpm = tercetos.ConvertToAssembler(tercetos.getValue(indexComparator));
+    String cpm = tercetos.ConvertToAssembler(comparatorSimbol);
     Integer indexToUpdate = tercetos.create(cpm, "", "");
     System.out.println("indexToUpdate: " + indexToUpdate);
     stack.push(indexToUpdate);
 :};
 
-comparator ::= LESS_THAN {: System.out.println("<"); indexComparator = tercetos.create("<", "", ""); :};
-comparator ::= GREATER_THAN {: System.out.println(">"); indexComparator = tercetos.create(">", "", ""); :};
-comparator ::= LESS_EQUAL_THAN {: System.out.println("<="); indexComparator = tercetos.create("<=", "", ""); :};
-comparator ::= GREATER_EQUAL_THAN {: System.out.println(">="); indexComparator = tercetos.create(">=", "", ""); :};
+comparator ::= LESS_THAN {: System.out.println("<"); comparatorSimbol = "<"; :};
+comparator ::= GREATER_THAN {: System.out.println(">"); comparatorSimbol = ">"; :};
+comparator ::= LESS_EQUAL_THAN {: System.out.println("<="); comparatorSimbol = "<="; :};
+comparator ::= GREATER_EQUAL_THAN {: System.out.println(">="); comparatorSimbol = ">="; :};
 
 assignment ::= ASSIG ELEMENT_IN_THE_MIDDLE OPEN_BRACKET params CLOSE_BRACKET 
 {: 
