@@ -253,11 +253,21 @@ comparator ::= GREATER_EQUAL_THAN {: System.out.println(">="); comparatorSimbol 
 
 assignment ::= ASSIG ELEMENT_IN_THE_MIDDLE OPEN_BRACKET params CLOSE_BRACKET 
 {: 
-    System.out.println("ElementInTheMiddle"); 
-    ElementInTheMiddle();
-    Object element = elementMiddle.pop();
-    Integer index = tercetos.create(element.toString(), "", "");
-    indexAssignment = tercetos.create("=", indexIdentifier, index);
+     System.out.println("ElementInTheMiddle");
+        ElementInTheMiddle();
+        //Object element = elementMiddle.pop();
+        int posicion_medio=(elementMiddle.size()/2);
+        System.out.println("Posicion media de la lista: " + posicion_medio);
+        String valor_medio="";
+        for(int i=0;i<=posicion_medio;i++)
+        {
+          Object element = elementMiddle.pop();
+          System.out.println("elemento desapilado: " + element.toString());
+          valor_medio = element.toString();
+
+        }
+        Integer index = tercetos.create(valor_medio, "", "");
+        indexAssignment = tercetos.create("=", indexIdentifier, index);
 :};
 
 assignment ::= ASSIG expression 
