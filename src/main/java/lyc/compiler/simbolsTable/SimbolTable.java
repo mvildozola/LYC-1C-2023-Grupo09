@@ -39,11 +39,53 @@ public class SimbolTable {
   }
 
   public void add(String nombre, DataType tipo, String valor, Integer longitud) {
-    if (!isInTable(nombre)) {
-        this.simbols.add(new SimbolRow(nombre, tipo.toString(), valor, longitud));
+    String guion = nombre.substring(0,1);
+    if(guion.equals("_"))
+    {
+        if (!isInTable(nombre)) {
+            this.simbols.add(new SimbolRow(nombre, tipo.toString(), valor, longitud));
+        }
+    }
+    else {
+        if (!isInTable(nombre)) {
+            this.simbols.add(new SimbolRow(nombre, tipo.toString(), valor, longitud));
+        } else {
+            throw new Error("Error de sintaxis: el simbolo '" + nombre + "' ya habia sido declarada.");
+        }
     }
   }
 
+  public String ObtenerTipo(String nombre) {
+      String tipo = "";
+      for (SimbolRow fila : simbols) {
+        if( fila.getNombre().equals(nombre)) {
+            tipo = fila.getId();
+        }
+      }
+      return tipo;
+  }
+
+  public void VerificarTipo(String tipo1, String tipo2){
+      if(tipo1.equals(tipo2))
+      {
+          System.out.println("Son del mismo tipo : " + tipo1 + " y " + tipo2);
+      }
+      else
+      {
+          System.out.println("Error,los simbolos no son del mismo tipo: " + tipo1 +" y "+ tipo2);
+          throw new Error("Error de sintaxis: No son del mismo tipo," + tipo1 + " , "+ tipo2);
+      }
+  }
+
+  public boolean VerificarConstante(String tipo1,String tipo2){
+      boolean a = true;
+      if((tipo1.equals("STRING")) && (tipo2.equals("STRING"))){
+         a = false;
+         System.out.println("Error, no se pueden realizar operaciones aritmeticas con simbolos String");
+         throw new Error("Error de sintaxis: No se pueden sumar valores tipo String.");
+      }
+      return a;
+  }
   public void addIdentifiers(ArrayList<String> identifiers, DataType dataType) {
     Iterator<String> i = identifiers.iterator();
     while (i.hasNext()) {

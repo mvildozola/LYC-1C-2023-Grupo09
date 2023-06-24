@@ -35,6 +35,7 @@ public class Tercetos {
       return tercetos.size();
     }
 
+
     public Integer update(Integer index, String param2) {
       Integer index1 = index -1;
       Terceto terceto = tercetos.get(index1);
@@ -62,27 +63,53 @@ public class Tercetos {
     public String getValue(Integer index){
       return tercetos.get(index -1).getElement1();
     }
-
-    public String ConvertToAssembler(String i)
-    {
-      String retVal = "";
-      switch(i) {
-        case "<":
-          retVal = "BGE";
-          break;
-        case ">":
-          retVal = "BLE";
-        case "<=":
-          retVal = "BGT";
-          break;
-        case ">=":
-          retVal = "BLT";
-          break;
-        default:break;
-      }
-      return retVal;
+    public String getValue2(Integer index){
+        return tercetos.get(index -1).getElement2();
+    }
+    public String getValue3(Integer index){
+        return tercetos.get(index -1).getElement3();
     }
 
+   public String ConvertToAssembler(String i)
+   {
+       String retVal="";
+       switch(i) {
+           case "<":
+               retVal= "BGE";
+               break;
+           case ">":
+               retVal= "BLE";
+               break;
+           case "<=":
+               retVal= "BGT";
+               break;
+           case ">=":
+               retVal="BLT";
+               break;
+           default:break;
+       }
+       return retVal;
+   }
+    public String Saltar_True(String c)
+    {
+        String comp ="";
+        switch(c){
+            case "<":
+                comp="BLT";
+                break;
+            case ">":
+                comp="BGT";
+                break;
+            case "<=":
+                comp="BLE";
+                break;
+            case ">=":
+                comp="BGE";
+                break;
+            default:break;
+        }
+        return comp;
+    }
     public void print() {
       int index = 1;
       System.out.println("Intermedia:");

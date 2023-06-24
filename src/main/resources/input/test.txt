@@ -1,11 +1,11 @@
 init {
-    variable1 : Int
-    variable2 : String
-    a1, b1 : Float
-    p1, p2, p3 : String
+    variable1,a,b,c,f,base,m : Int
+    variable2 : String 
+    a1, b1,e,x : Float
+    p1, p2, p3,d : String
 }
 
-a = 10 + 1 
+a = 10 + 6
 ciclo ( 1 < 10 )
 {
     a = 10 + 1
@@ -14,7 +14,11 @@ ciclo ( 1 < 10 )
 if ( 1 >= 10 )
 {
     a = 10 + 2
-} 
+}
+if( a>3 || b>5 ) 
+{
+ b = b + 1
+}
 
 if ( 1 <= 10 )
 {
@@ -25,22 +29,27 @@ else
     a = 10 + 2
 } 
 
+if ( c > 8  &&  b > 9 )
+{
+    f = m + 4
+}
 *-holamundo-* 
-
 base = 1 
 read(base)
 write(base)
-
+write("Hola compilador")
+d= "Hola mundo"
 a = 1
 b = 1
-c = 2 
-
-a = 99999.99
-a = 99.
-a = .9999
+c = 2
+a1 = 99999.99
+b1 = 99.
+e = .9999
 d = "asldk  fh sjf"
 d = "@sdADaSjfla%dfg"
 a = 1
 e = 1.1
 
-x = ElementInTheMiddle(1)
+x = ElementInTheMiddle(1,2, 3.5,variable2,b1) 
+
+
