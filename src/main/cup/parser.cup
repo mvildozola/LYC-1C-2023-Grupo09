@@ -8,6 +8,7 @@ import lyc.compiler.simbolsTable.DataType;
 import lyc.compiler.tercetos.Tercetos;
 import lyc.compiler.tercetos.Terceto;
 import java.util.Stack;
+import java.util.HashMap;
 
 class Parser;
 action code{:
@@ -18,7 +19,11 @@ action code{:
     Stack<Object> elementMiddle = new Stack<Object>();
     public SimbolTable simbolTable = SimbolTable.getSingletonInstance();
     public ArrayList<String> identifiersList = new ArrayList();
+    public ArrayList<Integer> arrayIndex = new ArrayList();
+    public ArrayList<String> arrayOperacion = new ArrayList();
+    public ArrayList<String> arrayTipoDeDato = new ArrayList();
     ArrayList<Object> element = new ArrayList<Object>();
+    HashMap<Integer,String> HashMap_tipos = new HashMap<>();
     int medio;
 
     public Tercetos tercetos = Tercetos.getSingletonInstance();
@@ -58,6 +63,9 @@ String tipo_id ="";
 String tipo_factor;
 String tipo_termino;
 String tipo_expresion;
+String resultado_tipo;
+String tipo_dato_expresion;
+String valor_id;
 boolean res;
 
 
@@ -100,6 +108,8 @@ terminal DOUBLE_POINTS;
 terminal FLOAT;
 terminal STRING;
 terminal INT;
+terminal LONG;
+terminal DOUBLE;
 terminal COMMA;
 terminal ELEMENT_IN_THE_MIDDLE;
 
@@ -128,7 +138,13 @@ start with program;
 program ::= initiation block
 {: 
     System.out.println("Program");
-    tercetos.print(); 
+    tercetos.print();
+    System.out.println("Tipos de Datos Resultantes de cada Operación: ");
+     System.out.println("INDICE       OPERACION        TIPODATO");
+      for(int i=0;i<arrayIndex.size();i++)
+         {
+          System.out.println("["+arrayIndex.get(i) +"]" +"               "+ arrayOperacion.get(i) + "             " + arrayTipoDeDato.get(i));
+         }
 :};
 
 block ::= sentence {: System.out.println("Block"); :};
@@ -142,10 +158,10 @@ sentence ::= IDENTIFIER:id
       throw new Error("Error de sintaxis: el simbolo " + id.toString() + " no ha sido declarado");
     }
     tipo_id = simbolTable.ObtenerTipo(id.toString());
-    indexIdentifier = tercetos.create(id.toString(), "", "");
+    valor_id = id.toString();
+    //indexIdentifier = tercetos.create(id.toString(), "", "");
 :} assignment {:
-               simbolTable.VerificarTipo(tipo_id,tipo_expresion);
-               System.out.println("End Sentence"); :};
+                System.out.println("End Sentence"); :};
 
 params ::= element 
 {: 
@@ -335,68 +351,128 @@ assignment ::= ASSIG ELEMENT_IN_THE_MIDDLE OPEN_BRACKET params CLOSE_BRACKET
 
         }
         Integer index = tercetos.create(valor_medio, "", "");
-         String valor= tercetos.getValue(indexIdentifier);
-        indexAssignment = tercetos.create("=", index, valor);
+         //String valor= tercetos.getValue(indexIdentifier);
+        indexAssignment = tercetos.create("=", index, valor_id);
 :};
 
-assignment ::= ASSIG expression 
+assignment ::= ASSIG expression
 {: 
     System.out.println("Assignment");
-    String valor= tercetos.getValue(indexIdentifier);
-    indexAssignment = tercetos.create("=", indexExpression, valor);
+    //String v_id= tercetos.getValue(indexIdentifier);
+    tipo_dato_expresion = resultado_tipo;
+    String valor_asig = simbolTable.ObtenerTipo(valor_id);
+    System.out.println("Tipo de dato del id lado izquierdo asignacion: "+ valor_asig);
+    System.out.println("tipo_dato_expresion lado derecho: "+ tipo_dato_expresion);
+    indexAssignment = tercetos.create("=", indexExpression, valor_id);
+    if(tipo_dato_expresion == valor_asig)
+    {
+      System.out.println("Son iguales tipos de datos en la asignacion");
+    }
+    else
+    {
+      System.out.println("Error. Diferentes tipos de datos en la asignacion");
+      throw new Error("Error de sintaxis: Tipos de datos diferentes para realizar la asignacion");
+    }
 :};
 
 expression ::= expression PLUS term 
 {: 
     System.out.println("+");
-    simbolTable.VerificarTipo(tipo_expresion,tipo_termino);
+    resultado_tipo = simbolTable.VerificarTipo(tipo_expresion,tipo_termino);
+    System.out.println("tipo_expresion: " + tipo_expresion);
+    System.out.println("tipo_termino: " + tipo_termino);
+    System.out.println("Resultado tipo: " + resultado_tipo);
     res = simbolTable.VerificarConstante(tipo_expresion,tipo_termino);
     if (res == false) {
      System.out.println("Error de Sintaxis. No se pueden sumar valores String");
     }
-    indexExpression = tercetos.create("+", indexFactor, indexExpression);
+    indexExpression = tercetos.create("+", indexTerm, indexExpression);
+    HashMap_tipos.put(indexExpression, resultado_tipo);
+    arrayIndex.add(indexExpression);
+    arrayOperacion.add("+");
+    arrayTipoDeDato.add(resultado_tipo);
+    System.out.println("Tipo de dato de la operacion : " + HashMap_tipos);
+    System.out.println("Indice de la expresion: " + indexExpression);
+    System.out.println("Operacion:   + ");
+    System.out.println("Resultado Tipo de dato de la operacion: " + resultado_tipo);
+
+
 :};
 expression ::= expression SUB term 
 {: 
     System.out.println("-");
-    simbolTable.VerificarTipo(tipo_expresion,tipo_termino);
+    resultado_tipo = simbolTable.VerificarTipo(tipo_expresion,tipo_termino);
+    System.out.println("Resultado tipo: " + resultado_tipo);
     res = simbolTable.VerificarConstante(tipo_expresion,tipo_termino);
     if (res == false) {
       System.out.println("Error de Sintaxis. No se pueden restar valores String");
     }
-    indexExpression = tercetos.create("-", indexFactor, indexExpression);
+    indexExpression = tercetos.create("-", indexTerm, indexExpression);
+     HashMap_tipos.put(indexExpression, resultado_tipo);
+     arrayIndex.add(indexExpression);
+     arrayOperacion.add("-");
+     arrayTipoDeDato.add(resultado_tipo);
+     System.out.println("Tipo de dato de la operacion : " + HashMap_tipos);
+     System.out.println("Indice de la expresion: " + indexExpression);
+     System.out.println("Operacion:   - ");
+     System.out.println("Resultado Tipo de dato de la operacion: " + resultado_tipo);
+
+
 :};
 expression ::= term 
 {: 
     System.out.println("Expression = Term"); 
     indexExpression = indexTerm;
     tipo_expresion= tipo_termino;
+    resultado_tipo = tipo_expresion;
 :};
 term ::= term MULT factor 
 {: 
     System.out.println("*");
-    simbolTable.VerificarTipo(tipo_termino,tipo_factor);
+    resultado_tipo = simbolTable.VerificarTipo(tipo_termino,tipo_factor);
+    tipo_termino = resultado_tipo;
+    System.out.println("Resultado tipo: " + resultado_tipo);
     res = simbolTable.VerificarConstante(tipo_termino,tipo_factor);
     if (res == false) {
      System.out.println("Error de Sintaxis. No se pueden multiplicar valores String");
     }
     indexTerm = tercetos.create("*", indexTerm, indexFactor);
+     HashMap_tipos.put(indexTerm, resultado_tipo);
+     arrayIndex.add(indexTerm);
+     arrayOperacion.add("*");
+     arrayTipoDeDato.add(resultado_tipo);
+     System.out.println("Tipo de dato de la operacion : " + HashMap_tipos);
+     System.out.println("Indice de la expresion: " + indexTerm);
+     System.out.println("Operacion:   * ");
+     System.out.println("Resultado Tipo de dato de la operacion: " + resultado_tipo);
+
 :};
 term ::= term DIV factor 
 {: 
     System.out.println("/");
-    simbolTable.VerificarTipo(tipo_termino,tipo_factor);
+    resultado_tipo = simbolTable.VerificarTipo(tipo_termino,tipo_factor);
+    System.out.println("Resultado tipo: " + resultado_tipo);
     res = simbolTable.VerificarConstante(tipo_expresion,tipo_termino);
     if (res == false) {
          System.out.println("Error de Sintaxis. No se pueden dividir valores String");
         }
     indexTerm = tercetos.create("/", indexTerm, indexFactor);
+     HashMap_tipos.put(indexTerm, resultado_tipo);
+     arrayIndex.add(indexTerm);
+     arrayOperacion.add("/");
+     arrayTipoDeDato.add(resultado_tipo);
+     System.out.println("Tipo de dato de la operacion : " + HashMap_tipos);
+     System.out.println("Indice de la expresion: " + indexTerm);
+     System.out.println("Operacion:   / ");
+     System.out.println("Resultado Tipo de dato de la operacion: " + resultado_tipo);
+
 :};
 term ::= factor 
 {: 
     System.out.println("Term = factor"); 
     indexTerm = indexFactor;
     tipo_termino = tipo_factor;
+    resultado_tipo = tipo_termino;
 :};
 factor ::= IDENTIFIER:id  
 {: 
@@ -464,7 +540,19 @@ variable ::= IDENTIFIER:id DOUBLE_POINTS FLOAT
     simbolTable.add(""+id, DataType.FLOAT, null, null); 
     tipo = DataType.FLOAT;
 :};
-variable ::= IDENTIFIER:id COMMA variable 
+variable ::= IDENTIFIER:id DOUBLE_POINTS LONG
+{:
+     System.out.println("variable");
+    simbolTable.add(""+id, DataType.LONG, null, null);
+    tipo = DataType.LONG;
+:};
+variable ::= IDENTIFIER:id DOUBLE_POINTS DOUBLE
+{:
+     System.out.println("variable");
+    simbolTable.add(""+id, DataType.DOUBLE, null, null);
+    tipo = DataType.DOUBLE;
+:};
+variable ::= IDENTIFIER:id COMMA variable
 {: 
     System.out.println("variable");
     simbolTable.add(""+id, tipo, null, null);

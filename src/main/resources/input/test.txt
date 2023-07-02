@@ -3,9 +3,12 @@ init {
     variable2 : String 
     a1, b1,e,x : Float
     p1, p2, p3,d : String
-}
+    w,j : Long
+    q : Double
+ }
 
 a = 10 + 6
+q = f + w  * 4.0
 ciclo ( 1 < 10 )
 {
     a = 10 + 1
@@ -13,7 +16,7 @@ ciclo ( 1 < 10 )
 
 if ( 1 >= 10 )
 {
-    a = 10 + 2
+    w = j - m
 }
 if( a>3 || b>5 ) 
 {
@@ -26,18 +29,19 @@ if ( 1 <= 10 )
 }
 else
 {
-    a = 10 + 2
+    a = 10 / 2
 } 
 
 if ( c > 8  &&  b > 9 )
 {
-    f = m + 4
+    a1 = m + 6.0
 }
 *-holamundo-* 
 base = 1 
 read(base)
 write(base)
-write("Hola compilador")
+p3 = "Hola compilador"
+write(p3)
 d= "Hola mundo"
 a = 1
 b = 1
@@ -49,7 +53,6 @@ d = "asldk  fh sjf"
 d = "@sdADaSjfla%dfg"
 a = 1
 e = 1.1
-
 x = ElementInTheMiddle(1,2, 3.5,variable2,b1) 
 
 

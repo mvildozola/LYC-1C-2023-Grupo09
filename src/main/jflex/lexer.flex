@@ -49,6 +49,8 @@ Init="init"
 Float="Float"
 String="String"
 Int="Int"
+Long="Long"
+Double="Double"
 ElemntInTheMiddle="ElementInTheMiddle"
 
 OpenBracket = "("
@@ -100,6 +102,8 @@ FloatConstant = {Digit}*{Dot}{Digit}*
   {Float}                                  { return symbol(ParserSym.FLOAT); }
   {String}                                 { return symbol(ParserSym.STRING); }
   {Int}                                    { return symbol(ParserSym.INT); }
+  {Long}                                   { return symbol(ParserSym.LONG); }
+  {Double}                                 { return symbol(ParserSym.DOUBLE); }
   {Init}                                   { return symbol(ParserSym.INIT); }
   {ElemntInTheMiddle}                      { return symbol(ParserSym.ELEMENT_IN_THE_MIDDLE); }
 

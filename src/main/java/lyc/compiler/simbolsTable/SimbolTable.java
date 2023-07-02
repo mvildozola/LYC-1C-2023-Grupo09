@@ -65,17 +65,76 @@ public class SimbolTable {
       return tipo;
   }
 
-  public void VerificarTipo(String tipo1, String tipo2){
-      if(tipo1.equals(tipo2))
+  public String VerificarTipo(String tipo1, String tipo2){
+      String resul = "";
+
+      if((tipo1 == "INT") && (tipo2 == "INT"))
       {
-          System.out.println("Son del mismo tipo : " + tipo1 + " y " + tipo2);
+          resul = "INT";
       }
-      else
+      if((tipo1 == "INT")&&(tipo2 == "LONG"))
       {
-          System.out.println("Error,los simbolos no son del mismo tipo: " + tipo1 +" y "+ tipo2);
-          throw new Error("Error de sintaxis: No son del mismo tipo," + tipo1 + " , "+ tipo2);
+          resul = "LONG";
       }
+      if((tipo1 == "LONG")&&(tipo2 == "INT"))
+      {
+          resul = "LONG";
+      }
+      if((tipo1 == "LONG")&&(tipo2 == "LONG"))
+      {
+          resul = "LONG";
+      }
+      if((tipo1 == "INT")&&(tipo2 == "FLOAT"))
+      {
+          resul = "FLOAT";
+      }
+      if((tipo1 == "FLOAT")&&(tipo2 == "INT"))
+      {
+          resul = "FLOAT";
+      }
+      if((tipo1 == "FLOAT")&&(tipo2 == "FLOAT"))
+      {
+          resul = "FLOAT";
+      }
+      if((tipo1 == "LONG")&&(tipo2 == "FLOAT"))
+      {
+          resul = "DOUBLE";
+      }
+      if((tipo1 == "FLOAT")&&(tipo2 == "LONG"))
+      {
+          resul = "DOUBLE";
+      }
+      if((tipo1 == "INT")&&(tipo2 == "DOUBLE"))
+      {
+          resul = "DOUBLE";
+      }
+      if((tipo1 == "LONG")&&(tipo2 == "DOUBLE"))
+      {
+          resul = "DOUBLE";
+      }
+      if((tipo1 == "FLOAT")&&(tipo2 == "DOUBLE"))
+      {
+          resul = "DOUBLE";
+      }
+      if((tipo1 == "DOUBLE")&&(tipo2 == "INT"))
+      {
+          resul = "DOUBLE";
+      }
+      if((tipo1 == "DOUBLE")&&(tipo2 == "LONG"))
+      {
+          resul = "DOUBLE";
+      }
+      if((tipo1 == "DOUBLE")&&(tipo2 == "FLOAT"))
+      {
+          resul = "DOUBLE";
+      }
+      if((tipo1 == "DOUBLE")&&(tipo2 == "DOUBLE"))
+      {
+          resul = "DOUBLE";
+      }
+      return  resul;
   }
+
 
   public boolean VerificarConstante(String tipo1,String tipo2){
       boolean a = true;
