@@ -44,11 +44,13 @@ If="if"
 Else= "else"
 Read= "read"
 Write="write"
-Not="not"
+NOT="not"
 Init="init"
 Float="Float"
 String="String"
 Int="Int"
+Long="Long"
+Double="Double"
 ElemntInTheMiddle="ElementInTheMiddle"
 
 OpenBracket = "("
@@ -62,8 +64,8 @@ LessThan = "<"
 LessEqualThan= "<="
 GreaterThan=">"
 GreaterEqualThan=">="
-And="&"
-Or="||"
+AND="&&"
+OR="||"
 Plus = "+"
 Mult = "*"
 Sub = "-"
@@ -95,11 +97,13 @@ FloatConstant = {Digit}*{Dot}{Digit}*
   {Else}                                   { return symbol(ParserSym.ELSE); }
   {Read}                                   { return symbol(ParserSym.READ); }
   {Write}                                  { return symbol(ParserSym.WRITE); }
-  {Not}                                    { return symbol(ParserSym.NOT); }
+  {NOT}                                    { return symbol(ParserSym.NOT); }
   {DoublePoints}                           { return symbol(ParserSym.DOUBLE_POINTS); }
   {Float}                                  { return symbol(ParserSym.FLOAT); }
   {String}                                 { return symbol(ParserSym.STRING); }
   {Int}                                    { return symbol(ParserSym.INT); }
+  {Long}                                   { return symbol(ParserSym.LONG); }
+  {Double}                                 { return symbol(ParserSym.DOUBLE); }
   {Init}                                   { return symbol(ParserSym.INIT); }
   {ElemntInTheMiddle}                      { return symbol(ParserSym.ELEMENT_IN_THE_MIDDLE); }
 
@@ -160,8 +164,8 @@ FloatConstant = {Digit}*{Dot}{Digit}*
   {LessEqualThan}                           { return symbol(ParserSym.LESS_EQUAL_THAN); }
   {GreaterThan}                             { return symbol(ParserSym.GREATER_THAN); }
   {GreaterEqualThan}                        { return symbol(ParserSym.GREATER_EQUAL_THAN); }
-  {And}                                     { return symbol(ParserSym.AND); }
-  {Or}                                      { return symbol(ParserSym.OR); }
+  {AND}                                     { return symbol(ParserSym.AND); }
+  {OR}                                      { return symbol(ParserSym.OR); }
   {Comma}                                   { return symbol(ParserSym.COMMA); }
 
   /* whitespace */

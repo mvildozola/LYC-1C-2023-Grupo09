@@ -8,18 +8,25 @@ import lyc.compiler.simbolsTable.DataType;
 import lyc.compiler.tercetos.Tercetos;
 import lyc.compiler.tercetos.Terceto;
 import java.util.Stack;
+import lyc.compiler.assembler.Assembler;
 
 class Parser;
 action code{:
     Stack<Integer> stack = new Stack<Integer>();
+    Stack<Integer> stack_and = new Stack<Integer>();
+    Stack<Integer> stack_etiq = new Stack<Integer>();
     DataType tipo;
     Stack<Object> elementMiddle = new Stack<Object>();
     public SimbolTable simbolTable = SimbolTable.getSingletonInstance();
     public ArrayList<String> identifiersList = new ArrayList();
+    public ArrayList<Integer> arrayIndex = new ArrayList();
+    public ArrayList<String> arrayOperacion = new ArrayList();
+    public ArrayList<String> arrayTipoDeDato = new ArrayList();
     ArrayList<Object> element = new ArrayList<Object>();
     int medio;
 
     public Tercetos tercetos = Tercetos.getSingletonInstance();
+    public Assembler assembler = Assembler.getSingletonInstance();
 
     public void agregar_a_lista(Object elem)  {
             element.add(elem);
@@ -48,6 +55,21 @@ Integer indexComparation = -1;
 Integer indexIdentifier = -1;
 
 String comparatorSimbol;
+Integer index_or;
+Integer index_and;
+boolean flag = false;
+Integer ini_while;
+String tipo_id ="";
+String tipo_factor;
+String tipo_termino;
+String tipo_expresion;
+String resultado_tipo;
+String tipo_dato_expresion;
+String valor_id;
+String salida;
+boolean res;
+boolean y;
+
 
 :}
 
@@ -88,6 +110,8 @@ terminal DOUBLE_POINTS;
 terminal FLOAT;
 terminal STRING;
 terminal INT;
+terminal LONG;
+terminal DOUBLE;
 terminal COMMA;
 terminal ELEMENT_IN_THE_MIDDLE;
 
@@ -116,7 +140,14 @@ start with program;
 program ::= initiation block
 {: 
     System.out.println("Program");
-    tercetos.print(); 
+    tercetos.print();
+    assembler.print();
+    System.out.println("Tipos de Datos Resultantes de cada Operacion: ");
+     System.out.println("INDICE       OPERACION        TIPODATO");
+      for(int i=0;i<arrayIndex.size();i++)
+         {
+          System.out.println("["+arrayIndex.get(i) +"]" +"               "+ arrayOperacion.get(i) + "             " + arrayTipoDeDato.get(i));
+         }
 :};
 
 block ::= sentence {: System.out.println("Block"); :};
@@ -124,9 +155,16 @@ block ::= block sentence {: System.out.println("Blocks"); :};
 
 sentence ::= IDENTIFIER:id 
 {: 
-    System.out.println("Identifier"); 
-    indexIdentifier = tercetos.create(id.toString(), "", "");
-:} assignment {: System.out.println("End Sentence"); :};
+    System.out.println("Identifier");
+    if(simbolTable.isInTable(id.toString()) == false)
+    {
+      throw new Error("Error de sintaxis: el simbolo " + id.toString() + " no ha sido declarado");
+    }
+    tipo_id = simbolTable.ObtenerTipo(id.toString());
+    valor_id = id.toString();
+    //indexIdentifier = tercetos.create(id.toString(), "", "");
+:} assignment {:
+                System.out.println("End Sentence"); :};
 
 params ::= element 
 {: 
@@ -139,7 +177,7 @@ params ::= params COMMA element
 
 element ::= IDENTIFIER:id  
 {: 
-    agregar_a_lista(id);System.out.println(id); 
+    agregar_a_lista(id);
     elementMiddle.push(id);
 :};
 element ::= INTEGER_CONSTANT:constant 
@@ -162,88 +200,161 @@ sentence ::= iteration {: System.out.println("Sentence interation"); :};
 
 sentence ::= selection {: System.out.println("Sentence selecction"); :};
 
-sentence ::= READ OPEN_BRACKET IDENTIFIER CLOSE_BRACKET 
+sentence ::= READ OPEN_BRACKET IDENTIFIER:id CLOSE_BRACKET
 {: 
-    System.out.println("Read"); 
+    System.out.println("Read");
+     if(simbolTable.isInTable(id.toString()) == false)
+        {
+          throw new Error("Error de sintaxis: el simbolo " + id.toString() + " no ha sido declarado");
+        }
     indexRead = tercetos.create("Read", indexExpression, "");
 :};
 
-sentence ::= WRITE OPEN_BRACKET STRING_CONSTANT CLOSE_BRACKET 
+sentence ::= WRITE OPEN_BRACKET STRING_CONSTANT:constant CLOSE_BRACKET
 {: 
-    System.out.println("Write string constant"); 
+    System.out.println("Write string constant : "+ constant);
+    indexWrite = tercetos.create("Write", constant.toString(), "");
+:};
+
+sentence ::= WRITE OPEN_BRACKET IDENTIFIER:id CLOSE_BRACKET
+{: 
+    System.out.println("Write");
+     if(simbolTable.isInTable(id.toString()) == false)
+        {
+          throw new Error("Error de sintaxis: el simbolo " + id.toString() + " no ha sido declarado");
+        }
     indexWrite = tercetos.create("Write", indexExpression, "");
 :};
 
-sentence ::= WRITE OPEN_BRACKET IDENTIFIER CLOSE_BRACKET 
-{: 
-    System.out.println("Write"); 
-    indexWrite = tercetos.create("Write", indexExpression, "");
-:};
+iteration ::= WHILE OPEN_BRACKET
+ {: System.out.println("Etiq Inicio While");
+     Integer indexEtiq = tercetos.create("Etiq", "", "");
 
-iteration ::= WHILE OPEN_BRACKET condition 
+     stack_etiq.push(indexEtiq);
+    :}
+ condition
 CLOSE_BRACKET OPEN_CURLY_BRACKET block CLOSE_CURLY_BRACKET 
 {: 
-    System.out.println("While"); 
-    Integer indexToUpdate = stack.pop();
-    Integer value = tercetos.size() + 1;
-    tercetos.update(indexToUpdate, value);
-:};
-
-selection ::= IF OPEN_BRACKET condition CLOSE_BRACKET OPEN_CURLY_BRACKET block CLOSE_CURLY_BRACKET 
-{:
-    System.out.println("If"); 
-    Integer indexToUpdate = stack.pop();
-    Integer value = tercetos.size() + 1;
-    tercetos.update(indexToUpdate, value);
-:};
-
-selection ::= IF OPEN_BRACKET condition CLOSE_BRACKET OPEN_CURLY_BRACKET block CLOSE_CURLY_BRACKET 
-{:
-    System.out.println("If 1"); 
+    System.out.println("While");
     Integer indexToUpdate = stack.pop();
     Integer value = tercetos.size() + 2;
     tercetos.update(indexToUpdate, value);
-    stack.push(value);
+    Integer indexBi = tercetos.create("BI", "", "");
+    Integer val = tercetos.size() + 1;
+    Integer indexToUpdate_Etiq = stack_etiq.pop();
+    tercetos.update(indexBi, indexToUpdate_Etiq);
+
+:};
+
+selection ::= IF OPEN_BRACKET condition CLOSE_BRACKET OPEN_CURLY_BRACKET block CLOSE_CURLY_BRACKET
+{:
+    System.out.println("If");
+    Integer indexToUpdate = stack.pop();
+    Integer value = tercetos.size() + 1;
+    tercetos.update(indexToUpdate, value);
+
+    if(! stack.empty())
+    {
+      indexToUpdate = stack.pop();
+      value = tercetos.size() + 2;
+      tercetos.update(indexToUpdate, value);
+    }
+
+        if( flag == true)
+        {
+           Integer indexToUpdate_and = stack_and.pop();
+           tercetos.update(indexToUpdate_and,value);
+        }
+
+:};
+
+selection ::= IF OPEN_BRACKET condition CLOSE_BRACKET OPEN_CURLY_BRACKET block CLOSE_CURLY_BRACKET
+{:
+    System.out.println("If 1");
+    Integer indexToUpdate = stack.pop();
+        Integer value = tercetos.size() + 2;
+        tercetos.update(indexToUpdate, value);
+        stack.push(value);
 :}
 ELSE OPEN_CURLY_BRACKET
 {: 
-    System.out.println("Else"); 
+    System.out.println("Else");
     Integer indexToUpdate = stack.pop();
-    Integer value = tercetos.size() + 2;
-    Integer indexBi = tercetos.create("BI", "", "");
-    stack.push(indexBi);
+        Integer value = tercetos.size() + 2;
+        Integer indexBi = tercetos.create("BI", "", "");
+        stack.push(indexBi);
+
 :} 
 block CLOSE_CURLY_BRACKET 
 {:
-    System.out.println("If with Else"); 
-    Integer indexToUpdate = stack.pop();
-    Integer value = tercetos.size() + 1;
-    tercetos.update(indexToUpdate, value);
-:};
+    System.out.println("If with Else");
+     Integer indexToUpdate = stack.pop();
+        Integer value = tercetos.size() + 1;
+        tercetos.update(indexToUpdate, value);
 
-condition ::= comparation {: System.out.println("Condition"); :};
+
+:};
 
 condition ::= NOT comparation {: System.out.println("Condition with not"); :};
 
-condition ::= comparation AND comparation {: System.out.println("And"); :};
+condition ::= comparation
+ {:
+     String cpm = tercetos.ConvertToAssembler(comparatorSimbol);
+     Integer indexToUpdate = tercetos.create(cpm, "", "");
+     stack_and.push(indexToUpdate);
+     flag = true;
+    System.out.println("If con AND");
 
-condition ::= comparation OR comparation {: System.out.println("And"); :};
+ :}
+     AND comparation {: System.out.println("And");
+                        String cpm_and_fin = tercetos.ConvertToAssembler(comparatorSimbol);
+                        Integer indexToUpdate_and = tercetos.create(cpm_and_fin,"","");
+                        stack.push(indexToUpdate_and);  :};
 
-comparation ::= expression 
+condition ::= comparation
+ {:
+    String cpm_or = tercetos.Saltar_True(comparatorSimbol);
+    Integer indexToUpdate = tercetos.create(cpm_or, "", "");
+    index_or = indexToUpdate;
+      :}
+      OR comparation {:       String cpm_or_fin = tercetos.ConvertToAssembler(comparatorSimbol);
+                              Integer indexToUpdate = tercetos.create(cpm_or_fin,"","");
+                              stack.push(indexToUpdate);
+                              tercetos.update(index_or,indexToUpdate +1);
+                              System.out.println("Condicion con OR"); :};
+condition ::= comparation
+{:
+ String cpm = tercetos.ConvertToAssembler(comparatorSimbol);
+      Integer indexToUpdate = tercetos.create(cpm, "", "");
+      stack.push(indexToUpdate);
+       System.out.println("Condicion es comparacion");
+       System.out.println("indexToUpdate de cmp: "+ indexToUpdate); :};
+
+
+ comparation ::= expression
 {: 
-    System.out.println("Comparation");
+    System.out.println("Comparation expresion izquierda");
     indexExpressionLeft = indexExpression;
 :}
 comparator expression 
 {: 
-    System.out.println("Comparation");
+    System.out.println("Comparation expresion derecha");
     indexExpressionRight = indexExpression;
     indexComparation = tercetos.create("CMP", indexExpressionLeft, indexExpressionRight);
-    
-    String cpm = tercetos.ConvertToAssembler(comparatorSimbol);
-    Integer indexToUpdate = tercetos.create(cpm, "", "");
-    System.out.println("indexToUpdate: " + indexToUpdate);
-    stack.push(indexToUpdate);
+    String valor_izquierdo = tercetos.getValue(indexExpressionLeft);
+    String valor_derecho = tercetos.getValue(indexExpressionRight);
+    String tipo_devuelto_izq = simbolTable.ObtenerTipoParaComparar(valor_izquierdo);
+    String tipo_devuelto_der = simbolTable.ObtenerTipoParaComparar(valor_derecho);
+    y = simbolTable.Verificar_Para_Comparar(tipo_devuelto_izq,tipo_devuelto_der);
+     if(y)
+     {
+      System.out.println("Son iguales tipos de datos al comparar");
+     }
+     else
+     {
+      System.out.println("Error. Los tipos de datos no son iguales para comparar");
+     }
+
 :};
 
 comparator ::= LESS_THAN {: System.out.println("<"); comparatorSimbol = "<"; :};
@@ -253,70 +364,151 @@ comparator ::= GREATER_EQUAL_THAN {: System.out.println(">="); comparatorSimbol 
 
 assignment ::= ASSIG ELEMENT_IN_THE_MIDDLE OPEN_BRACKET params CLOSE_BRACKET 
 {: 
-    System.out.println("ElementInTheMiddle"); 
-    ElementInTheMiddle();
-    Object element = elementMiddle.pop();
-    Integer index = tercetos.create(element.toString(), "", "");
-    indexAssignment = tercetos.create("=", indexIdentifier, index);
+     System.out.println("ElementInTheMiddle");
+        ElementInTheMiddle();
+        //Object element = elementMiddle.pop();
+        int posicion_medio=(elementMiddle.size()/2);
+        String valor_medio="";
+        for(int i=0;i<=posicion_medio;i++)
+        {
+          Object element = elementMiddle.pop();
+          valor_medio = element.toString();
+
+        }
+        Integer index = tercetos.create(valor_medio, "", "");
+         //String valor= tercetos.getValue(indexIdentifier);
+        indexAssignment = tercetos.create("=", index, valor_id);
 :};
 
-assignment ::= ASSIG expression 
+assignment ::= ASSIG expression
 {: 
-    System.out.println("Assignment"); 
-    indexAssignment = tercetos.create("=", indexIdentifier, indexExpression);
+    System.out.println("Assignment");
+    //String v_id= tercetos.getValue(indexIdentifier);
+    tipo_dato_expresion = resultado_tipo;
+    String valor_asig = simbolTable.ObtenerTipo(valor_id);
+    indexAssignment = tercetos.create("=", indexExpression, valor_id);
+    if(tipo_dato_expresion == valor_asig)
+    {
+      System.out.println("Son iguales tipos de datos en la asignacion");
+    }
+    else
+    {
+      System.out.println("Error. Diferentes tipos de datos en la asignacion");
+      throw new Error("Error de sintaxis: Tipos de datos diferentes para realizar la asignacion");
+    }
 :};
 
 expression ::= expression PLUS term 
 {: 
     System.out.println("+");
-    indexExpression = tercetos.create("+", indexFactor, indexExpression);
+    resultado_tipo = simbolTable.VerificarTipo(tipo_expresion,tipo_termino);
+    System.out.println("Resultado tipo: " + resultado_tipo);
+    res = simbolTable.VerificarConstante(tipo_expresion,tipo_termino);
+    if (res == false) {
+     System.out.println("Error de Sintaxis. No se pueden sumar valores String");
+    }
+    indexExpression = tercetos.create("+", indexTerm, indexExpression);
+    arrayIndex.add(indexExpression);
+    arrayOperacion.add("+");
+    arrayTipoDeDato.add(resultado_tipo);
+
 :};
 expression ::= expression SUB term 
 {: 
-    System.out.println("-"); 
-    indexExpression = tercetos.create("-", indexFactor, indexExpression);
+    System.out.println("-");
+    resultado_tipo = simbolTable.VerificarTipo(tipo_expresion,tipo_termino);
+    System.out.println("Resultado tipo: " + resultado_tipo);
+    res = simbolTable.VerificarConstante(tipo_expresion,tipo_termino);
+    if (res == false) {
+      System.out.println("Error de Sintaxis. No se pueden restar valores String");
+    }
+    indexExpression = tercetos.create("-", indexTerm, indexExpression);
+     arrayIndex.add(indexExpression);
+     arrayOperacion.add("-");
+     arrayTipoDeDato.add(resultado_tipo);
 :};
 expression ::= term 
 {: 
     System.out.println("Expression = Term"); 
     indexExpression = indexTerm;
+    tipo_expresion= tipo_termino;
+    resultado_tipo = tipo_expresion;
 :};
 term ::= term MULT factor 
 {: 
-    System.out.println("*"); 
+    System.out.println("*");
+    resultado_tipo = simbolTable.VerificarTipo(tipo_termino,tipo_factor);
+    tipo_termino = resultado_tipo;
+    System.out.println("Resultado tipo: " + resultado_tipo);
+    res = simbolTable.VerificarConstante(tipo_termino,tipo_factor);
+    if (res == false) {
+     System.out.println("Error de Sintaxis. No se pueden multiplicar valores String");
+    }
     indexTerm = tercetos.create("*", indexTerm, indexFactor);
+     arrayIndex.add(indexTerm);
+     arrayOperacion.add("*");
+     arrayTipoDeDato.add(resultado_tipo);
 :};
 term ::= term DIV factor 
 {: 
-    System.out.println("/"); 
+    System.out.println("/");
+    resultado_tipo = simbolTable.VerificarTipo(tipo_termino,tipo_factor);
+    System.out.println("Resultado tipo: " + resultado_tipo);
+    res = simbolTable.VerificarConstante(tipo_expresion,tipo_termino);
+    if (res == false) {
+         System.out.println("Error de Sintaxis. No se pueden dividir valores String");
+        }
     indexTerm = tercetos.create("/", indexTerm, indexFactor);
+     arrayIndex.add(indexTerm);
+     arrayOperacion.add("/");
+     arrayTipoDeDato.add(resultado_tipo);
 :};
 term ::= factor 
 {: 
     System.out.println("Term = factor"); 
     indexTerm = indexFactor;
+    tipo_termino = tipo_factor;
+    resultado_tipo = tipo_termino;
 :};
 factor ::= IDENTIFIER:id  
 {: 
-    System.out.println("Id: " + id);
-    indexFactor = tercetos.create(id.toString(), "", "");
+    System.out.println(" ID en Factor , Id: " + id);
+      if(simbolTable.isInTable(id.toString()) == false)
+        {
+          throw new Error("Error de sintaxis: el simbolo " + id.toString() + " no ha sido declarado");
+        }
+
+      tipo_factor = simbolTable.ObtenerTipo(id.toString());
+      indexFactor = tercetos.create(id.toString(), "", "");
 :};
 factor ::= INTEGER_CONSTANT:constant 
 {: 
     System.out.println("Constant integer: " + constant );
     simbolTable.add("_"+constant, DataType.INT, constant.toString(), constant.toString().length());
+    String c = "_";
+    String d = constant.toString();
+    String const_int = c + d;
+    tipo_factor = simbolTable.ObtenerTipo(const_int);
     indexFactor = tercetos.create(constant.toString(), "", "");
 :};
 factor ::= STRING_CONSTANT:constant  
 {: 
     System.out.println("Constant string: " + constant );
     simbolTable.add("_"+constant, DataType.STRING, constant.toString(), constant.toString().length());
-    indexFactor = tercetos.create(constant.toString(), "", "");
+     String c = "_";
+     String d = constant.toString();
+     String const_string = c + d;
+     tipo_factor = simbolTable.ObtenerTipo(const_string);
+     indexFactor = tercetos.create(constant.toString(), "", "");
 :};
 factor ::= FLOAT_CONSTANT:constant   
 {: 
     System.out.println("Constant float: " + constant ); 
     simbolTable.add("_"+constant, DataType.FLOAT, constant.toString(), constant.toString().length());
+    String c = "_";
+    String d = constant.toString();
+    String const_float = c + d;
+    tipo_factor = simbolTable.ObtenerTipo(const_float);
     indexFactor = tercetos.create(constant.toString(), "", "");
 :};
 factor ::= OPEN_BRACKET expression CLOSE_BRACKET {: System.out.println("Factor = (Expression)"); :};
@@ -327,22 +519,37 @@ declare ::= variable;
 declare ::= declare variable;
 
 variable ::= IDENTIFIER:id DOUBLE_POINTS INT 
-{: 
+{:
+    System.out.println("variable");
     simbolTable.add(""+id, DataType.INT, null, null); 
     tipo = DataType.INT;
 :};
 variable ::= IDENTIFIER:id DOUBLE_POINTS STRING 
-{: 
+{:
+    System.out.println("variable");
     simbolTable.add(""+id, DataType.STRING, null, null); 
     tipo = DataType.STRING;
 :};
 variable ::= IDENTIFIER:id DOUBLE_POINTS FLOAT 
-{: 
+{:
+     System.out.println("variable");
     simbolTable.add(""+id, DataType.FLOAT, null, null); 
     tipo = DataType.FLOAT;
 :};
-variable ::= IDENTIFIER:id COMMA variable 
+variable ::= IDENTIFIER:id DOUBLE_POINTS LONG
+{:
+     System.out.println("variable");
+    simbolTable.add(""+id, DataType.LONG, null, null);
+    tipo = DataType.LONG;
+:};
+variable ::= IDENTIFIER:id DOUBLE_POINTS DOUBLE
+{:
+     System.out.println("variable");
+    simbolTable.add(""+id, DataType.DOUBLE, null, null);
+    tipo = DataType.DOUBLE;
+:};
+variable ::= IDENTIFIER:id COMMA variable
 {: 
     System.out.println("variable");
-    simbolTable.add(""+id, tipo, null, null); 
+    simbolTable.add(""+id, tipo, null, null);
 :};
