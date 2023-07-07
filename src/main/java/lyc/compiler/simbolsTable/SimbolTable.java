@@ -54,7 +54,26 @@ public class SimbolTable {
         }
     }
   }
+  public String ObtenerTipoParaComparar(String nombre){
+      String tipo = "";
+      String prefijo = "_";
+      String simbolo = prefijo + nombre;
 
+      for (SimbolRow fila : simbols) {
+          if( fila.getNombre().startsWith("_")) {
+              if(simbolo.equals(fila.getNombre())){
+                  tipo = fila.getId();
+              }
+          }
+          else {
+              if( fila.getNombre().equals(nombre)) {
+                  tipo = fila.getId();
+              }
+          }
+      }
+      return tipo;
+
+  }
   public String ObtenerTipo(String nombre) {
       String tipo = "";
       for (SimbolRow fila : simbols) {
@@ -63,6 +82,15 @@ public class SimbolTable {
         }
       }
       return tipo;
+  }
+
+  public boolean Verificar_Para_Comparar(String tipo1, String tipo2){
+      boolean x = false;
+      if(tipo1 == tipo2)
+      {
+          x = true;
+      }
+       return x;
   }
 
   public String VerificarTipo(String tipo1, String tipo2){
@@ -140,8 +168,8 @@ public class SimbolTable {
       boolean a = true;
       if((tipo1.equals("STRING")) && (tipo2.equals("STRING"))){
          a = false;
-         System.out.println("Error, no se pueden realizar operaciones aritmeticas con simbolos String");
-         throw new Error("Error de sintaxis: No se pueden sumar valores tipo String.");
+         System.out.println("Error, no se pueden realizar operaciones  con simbolos String");
+         throw new Error("Error de sintaxis: No se pueden operar con valores tipo String.");
       }
       return a;
   }
@@ -193,5 +221,18 @@ public Boolean isInTable(String nombre) {
       );
     }
     return result;
+  }
+  public Integer size_tabla(){
+      return simbols.size();
+  }
+
+  public String Nombre(int a){
+      return simbols.get(a).getNombre();
+  }
+  public String Tipo(int a){
+        return simbols.get(a).getId();
+  }
+  public String Valor(int a){
+        return simbols.get(a).getValor();
   }
 }

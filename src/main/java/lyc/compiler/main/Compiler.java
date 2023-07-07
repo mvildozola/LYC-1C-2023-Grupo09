@@ -7,6 +7,8 @@ import lyc.compiler.files.FileOutputWriter;
 import lyc.compiler.files.SymbolTableGenerator;
 import lyc.compiler.files.IntermediateCodeGenerator;
 import lyc.compiler.simbolsTable.SimbolTable;
+import lyc.compiler.files.AsmCodeGenerator;
+import lyc.compiler.assembler.Assembler;
 
 import java.io.IOException;
 import java.io.Reader;
@@ -22,13 +24,14 @@ public final class Compiler {
         }
 
         SimbolTable simbolTable = SimbolTable.getSingletonInstance();
+        Assembler assembler = Assembler.getSingletonInstance();
 
         try (Reader reader = FileFactory.create(args[0])) {
             Parser parser = ParserFactory.create(reader);
             parser.parse();
             FileOutputWriter.writeOutput("symbol-table.txt", new SymbolTableGenerator());
             FileOutputWriter.writeOutput("intermediate-code.txt", new IntermediateCodeGenerator());
-            FileOutputWriter.writeOutput("final.asm", new SymbolTableGenerator());
+            FileOutputWriter.writeOutput("final.asm", new AsmCodeGenerator());
         } catch (IOException e) {
             System.err.println("There was an error trying to read input file " + e.getMessage());
             System.exit(0);

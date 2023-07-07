@@ -51,6 +51,7 @@ public class Tercetos {
       terceto.setElement2("[" + param2 + "]");
       tercetos.set(index1, terceto);
       System.out.println("update:" + index1 + " " +param2);
+      System.out.println("elemento1 y elemento2 del terceto:" + terceto.getElement1() + " " +terceto.getElement2());
       return tercetos.size();
     }
 

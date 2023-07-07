@@ -8,7 +8,7 @@ import lyc.compiler.simbolsTable.DataType;
 import lyc.compiler.tercetos.Tercetos;
 import lyc.compiler.tercetos.Terceto;
 import java.util.Stack;
-import java.util.HashMap;
+import lyc.compiler.assembler.Assembler;
 
 class Parser;
 action code{:
@@ -23,10 +23,10 @@ action code{:
     public ArrayList<String> arrayOperacion = new ArrayList();
     public ArrayList<String> arrayTipoDeDato = new ArrayList();
     ArrayList<Object> element = new ArrayList<Object>();
-    HashMap<Integer,String> HashMap_tipos = new HashMap<>();
     int medio;
 
     public Tercetos tercetos = Tercetos.getSingletonInstance();
+    public Assembler assembler = Assembler.getSingletonInstance();
 
     public void agregar_a_lista(Object elem)  {
             element.add(elem);
@@ -66,7 +66,9 @@ String tipo_expresion;
 String resultado_tipo;
 String tipo_dato_expresion;
 String valor_id;
+String salida;
 boolean res;
+boolean y;
 
 
 :}
@@ -139,7 +141,8 @@ program ::= initiation block
 {: 
     System.out.println("Program");
     tercetos.print();
-    System.out.println("Tipos de Datos Resultantes de cada Operación: ");
+    assembler.print();
+    System.out.println("Tipos de Datos Resultantes de cada Operacion: ");
      System.out.println("INDICE       OPERACION        TIPODATO");
       for(int i=0;i<arrayIndex.size();i++)
          {
@@ -207,10 +210,10 @@ sentence ::= READ OPEN_BRACKET IDENTIFIER:id CLOSE_BRACKET
     indexRead = tercetos.create("Read", indexExpression, "");
 :};
 
-sentence ::= WRITE OPEN_BRACKET STRING_CONSTANT CLOSE_BRACKET 
+sentence ::= WRITE OPEN_BRACKET STRING_CONSTANT:constant CLOSE_BRACKET
 {: 
-    System.out.println("Write string constant"); 
-    indexWrite = tercetos.create("Write", indexExpression, "");
+    System.out.println("Write string constant : "+ constant);
+    indexWrite = tercetos.create("Write", constant.toString(), "");
 :};
 
 sentence ::= WRITE OPEN_BRACKET IDENTIFIER:id CLOSE_BRACKET
@@ -247,8 +250,15 @@ selection ::= IF OPEN_BRACKET condition CLOSE_BRACKET OPEN_CURLY_BRACKET block C
 {:
     System.out.println("If");
     Integer indexToUpdate = stack.pop();
-        Integer value = tercetos.size() + 1;
-        tercetos.update(indexToUpdate, value);
+    Integer value = tercetos.size() + 1;
+    tercetos.update(indexToUpdate, value);
+
+    if(! stack.empty())
+    {
+      indexToUpdate = stack.pop();
+      value = tercetos.size() + 2;
+      tercetos.update(indexToUpdate, value);
+    }
 
         if( flag == true)
         {
@@ -316,19 +326,34 @@ condition ::= comparation
 {:
  String cpm = tercetos.ConvertToAssembler(comparatorSimbol);
       Integer indexToUpdate = tercetos.create(cpm, "", "");
-      stack.push(indexToUpdate); :};
+      stack.push(indexToUpdate);
+       System.out.println("Condicion es comparacion");
+       System.out.println("indexToUpdate de cmp: "+ indexToUpdate); :};
+
 
  comparation ::= expression
 {: 
-    System.out.println("Comparation");
+    System.out.println("Comparation expresion izquierda");
     indexExpressionLeft = indexExpression;
 :}
 comparator expression 
 {: 
-    System.out.println("Comparation");
+    System.out.println("Comparation expresion derecha");
     indexExpressionRight = indexExpression;
     indexComparation = tercetos.create("CMP", indexExpressionLeft, indexExpressionRight);
-
+    String valor_izquierdo = tercetos.getValue(indexExpressionLeft);
+    String valor_derecho = tercetos.getValue(indexExpressionRight);
+    String tipo_devuelto_izq = simbolTable.ObtenerTipoParaComparar(valor_izquierdo);
+    String tipo_devuelto_der = simbolTable.ObtenerTipoParaComparar(valor_derecho);
+    y = simbolTable.Verificar_Para_Comparar(tipo_devuelto_izq,tipo_devuelto_der);
+     if(y)
+     {
+      System.out.println("Son iguales tipos de datos al comparar");
+     }
+     else
+     {
+      System.out.println("Error. Los tipos de datos no son iguales para comparar");
+     }
 
 :};
 
@@ -361,8 +386,6 @@ assignment ::= ASSIG expression
     //String v_id= tercetos.getValue(indexIdentifier);
     tipo_dato_expresion = resultado_tipo;
     String valor_asig = simbolTable.ObtenerTipo(valor_id);
-    System.out.println("Tipo de dato del id lado izquierdo asignacion: "+ valor_asig);
-    System.out.println("tipo_dato_expresion lado derecho: "+ tipo_dato_expresion);
     indexAssignment = tercetos.create("=", indexExpression, valor_id);
     if(tipo_dato_expresion == valor_asig)
     {
@@ -379,23 +402,15 @@ expression ::= expression PLUS term
 {: 
     System.out.println("+");
     resultado_tipo = simbolTable.VerificarTipo(tipo_expresion,tipo_termino);
-    System.out.println("tipo_expresion: " + tipo_expresion);
-    System.out.println("tipo_termino: " + tipo_termino);
     System.out.println("Resultado tipo: " + resultado_tipo);
     res = simbolTable.VerificarConstante(tipo_expresion,tipo_termino);
     if (res == false) {
      System.out.println("Error de Sintaxis. No se pueden sumar valores String");
     }
     indexExpression = tercetos.create("+", indexTerm, indexExpression);
-    HashMap_tipos.put(indexExpression, resultado_tipo);
     arrayIndex.add(indexExpression);
     arrayOperacion.add("+");
     arrayTipoDeDato.add(resultado_tipo);
-    System.out.println("Tipo de dato de la operacion : " + HashMap_tipos);
-    System.out.println("Indice de la expresion: " + indexExpression);
-    System.out.println("Operacion:   + ");
-    System.out.println("Resultado Tipo de dato de la operacion: " + resultado_tipo);
-
 
 :};
 expression ::= expression SUB term 
@@ -408,16 +423,9 @@ expression ::= expression SUB term
       System.out.println("Error de Sintaxis. No se pueden restar valores String");
     }
     indexExpression = tercetos.create("-", indexTerm, indexExpression);
-     HashMap_tipos.put(indexExpression, resultado_tipo);
      arrayIndex.add(indexExpression);
      arrayOperacion.add("-");
      arrayTipoDeDato.add(resultado_tipo);
-     System.out.println("Tipo de dato de la operacion : " + HashMap_tipos);
-     System.out.println("Indice de la expresion: " + indexExpression);
-     System.out.println("Operacion:   - ");
-     System.out.println("Resultado Tipo de dato de la operacion: " + resultado_tipo);
-
-
 :};
 expression ::= term 
 {: 
@@ -437,15 +445,9 @@ term ::= term MULT factor
      System.out.println("Error de Sintaxis. No se pueden multiplicar valores String");
     }
     indexTerm = tercetos.create("*", indexTerm, indexFactor);
-     HashMap_tipos.put(indexTerm, resultado_tipo);
      arrayIndex.add(indexTerm);
      arrayOperacion.add("*");
      arrayTipoDeDato.add(resultado_tipo);
-     System.out.println("Tipo de dato de la operacion : " + HashMap_tipos);
-     System.out.println("Indice de la expresion: " + indexTerm);
-     System.out.println("Operacion:   * ");
-     System.out.println("Resultado Tipo de dato de la operacion: " + resultado_tipo);
-
 :};
 term ::= term DIV factor 
 {: 
@@ -457,15 +459,9 @@ term ::= term DIV factor
          System.out.println("Error de Sintaxis. No se pueden dividir valores String");
         }
     indexTerm = tercetos.create("/", indexTerm, indexFactor);
-     HashMap_tipos.put(indexTerm, resultado_tipo);
      arrayIndex.add(indexTerm);
      arrayOperacion.add("/");
      arrayTipoDeDato.add(resultado_tipo);
-     System.out.println("Tipo de dato de la operacion : " + HashMap_tipos);
-     System.out.println("Indice de la expresion: " + indexTerm);
-     System.out.println("Operacion:   / ");
-     System.out.println("Resultado Tipo de dato de la operacion: " + resultado_tipo);
-
 :};
 term ::= factor 
 {: 
