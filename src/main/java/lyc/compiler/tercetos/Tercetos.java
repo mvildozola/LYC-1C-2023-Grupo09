@@ -3,7 +3,7 @@ package lyc.compiler.tercetos;
 import java.util.ArrayList;
 
 public class Tercetos {
-   ArrayList<Terceto> tercetos;
+   public ArrayList<Terceto> tercetos;
    private static Tercetos terceto;
 
     private Tercetos() {
@@ -11,6 +11,7 @@ public class Tercetos {
       System.out.println("Inicializando Tercetos");
     }
 
+     
     public static Tercetos getSingletonInstance() {
         if (terceto == null){
           terceto = new Tercetos();
@@ -32,6 +33,11 @@ public class Tercetos {
 
     public Integer create(String param1, Integer param2, String param3) {
       tercetos.add(new Terceto(param1, "[" + param2 + "]", param3 ));
+      return tercetos.size();
+    }
+
+    public Integer create(String param1,  String param2, Integer param3) {
+      tercetos.add(new Terceto(param1, param2, "[" + param3 + "]" ));
       return tercetos.size();
     }
 
