@@ -235,4 +235,14 @@ public Boolean isInTable(String nombre) {
   public String Valor(int a){
         return simbols.get(a).getValor();
   }
+
+  public String FindByValue(String a){
+    for (SimbolRow row : simbols) {
+        if(row.getValor().equals(a))
+        {
+            return row.getNombre();
+        }
+    }
+    return a;
+  }
 }

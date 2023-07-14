@@ -141,13 +141,13 @@ program ::= initiation block
 {: 
     System.out.println("Program");
     tercetos.print();
-    assembler.print();
-    System.out.println("Tipos de Datos Resultantes de cada Operacion: ");
-     System.out.println("INDICE       OPERACION        TIPODATO");
-      for(int i=0;i<arrayIndex.size();i++)
-         {
-          System.out.println("["+arrayIndex.get(i) +"]" +"               "+ arrayOperacion.get(i) + "             " + arrayTipoDeDato.get(i));
-         }
+    assembler.generar(tercetos.tercetos);
+    // System.out.println("Tipos de Datos Resultantes de cada Operacion: ");
+    //  System.out.println("INDICE       OPERACION        TIPODATO");
+    //   for(int i=0;i<arrayIndex.size();i++)
+    //      {
+    //       System.out.println("["+arrayIndex.get(i) +"]" +"               "+ arrayOperacion.get(i) + "             " + arrayTipoDeDato.get(i));
+    //      }
 :};
 
 block ::= sentence {: System.out.println("Block"); :};
@@ -377,7 +377,7 @@ assignment ::= ASSIG ELEMENT_IN_THE_MIDDLE OPEN_BRACKET params CLOSE_BRACKET
         }
         Integer index = tercetos.create(valor_medio, "", "");
          //String valor= tercetos.getValue(indexIdentifier);
-        indexAssignment = tercetos.create("=", index, valor_id);
+        indexAssignment = tercetos.create("=", valor_id, index );
 :};
 
 assignment ::= ASSIG expression
@@ -386,7 +386,8 @@ assignment ::= ASSIG expression
     //String v_id= tercetos.getValue(indexIdentifier);
     tipo_dato_expresion = resultado_tipo;
     String valor_asig = simbolTable.ObtenerTipo(valor_id);
-    indexAssignment = tercetos.create("=", indexExpression, valor_id);
+    //indexAssignment = tercetos.create("=", indexExpression, valor_id);
+    indexAssignment = tercetos.create("=", valor_id, indexExpression);
     if(tipo_dato_expresion == valor_asig)
     {
       System.out.println("Son iguales tipos de datos en la asignacion");
@@ -407,7 +408,7 @@ expression ::= expression PLUS term
     if (res == false) {
      System.out.println("Error de Sintaxis. No se pueden sumar valores String");
     }
-    indexExpression = tercetos.create("+", indexTerm, indexExpression);
+    indexExpression = tercetos.create("+", indexExpression, indexTerm);
     arrayIndex.add(indexExpression);
     arrayOperacion.add("+");
     arrayTipoDeDato.add(resultado_tipo);
