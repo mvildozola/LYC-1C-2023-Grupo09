@@ -47,10 +47,11 @@ public class Assembler {
            String el1 = terceto.getElement1();
            String el2 = terceto.getElement2();
            String el3 = terceto.getElement3();
-           switch (el1){
-                
+           switch (el1)
+           {     
                 case "=":
                 {
+                    asm.add("etiq_[" + count +"]");
                     AddAsm("FLD " + GetAsmRef(el3));
                     AddAsm("FSTP " + el2);
                     aux = "aux" + count;
@@ -60,6 +61,7 @@ public class Assembler {
                 }
                 case "+":
                 {   
+                    asm.add("etiq_[" + count +"]");
                     AddAsm("FLD " + GetAsmRef(el2));
                     AddAsm("FLD " + GetAsmRef(el3));
                     AddAsm("FADD ");
@@ -71,6 +73,7 @@ public class Assembler {
                 }
                 case "-":
                 {
+                    asm.add("etiq_[" + count +"]");
                     AddAsm("FLD " + GetAsmRef(el2));
                     AddAsm("FLD " + GetAsmRef(el3));
                     AddAsm("FSUB ");
@@ -82,6 +85,7 @@ public class Assembler {
                 }
                 case "*":
                 {
+                    asm.add("etiq_[" + count +"]");
                     AddAsm("FLD " + GetAsmRef(el2));
                     AddAsm("FLD " + GetAsmRef(el3));
                     AddAsm("FMUL ");
@@ -93,6 +97,7 @@ public class Assembler {
                 }
                 case "/":
                 {
+                    asm.add("etiq_[" + count +"]");
                     AddAsm("FLD " + GetAsmRef(el2));
                     AddAsm("FLD " + GetAsmRef(el3));
                     AddAsm("FDIV ");
@@ -114,6 +119,7 @@ public class Assembler {
                 }
                 case "BLT":
                 {
+                    asm.add("etiq_[" + count +"]");
                     String e = "etiq_" + el2;
                     pila.push(e);
                     AddAsm("JB " + e);
@@ -122,6 +128,7 @@ public class Assembler {
                 }
                 case "BLE":
                 {
+                    asm.add("etiq_[" + count +"]");
                     String e = "etiq_" + el2;
                     pila.push(e);
                     AddAsm("JNA " + e);
@@ -130,6 +137,7 @@ public class Assembler {
                 }
                 case "BGE":
                 {
+                    asm.add("etiq_[" + count +"]");
                     String e = "etiq_" + el2;
                     pila.push(e);
                     AddAsm("JAE " + e);
@@ -138,6 +146,7 @@ public class Assembler {
                 }
                 case "BGT":
                 {
+                    asm.add("etiq_[" + count +"]");
                     String e = "etiq_" + el2;
                     pila.push(e);
                     AddAsm("JA " + e);
@@ -146,6 +155,7 @@ public class Assembler {
                 }
                 case "BEQ":
                 {
+                    asm.add("etiq_[" + count +"]");
                     String e = "etiq_" + el2;
                     pila.push(e);
                     AddAsm("JE " + e);
@@ -154,6 +164,7 @@ public class Assembler {
                 }
                 case "BNE":
                 {
+                    asm.add("etiq_[" + count +"]");
                     String e = "etiq_" + el2;
                     pila.push(e);
                     AddAsm("JNE " + e);
@@ -162,10 +173,11 @@ public class Assembler {
                 }
                 case "BI":
                 {
+                    asm.add("etiq_[" + count +"]");
                     AddAsm("JMP " + "etiq_" + el2);
                     AddAsm("");
-                    String e = pila.pop();
-                    asm.add(e);
+                    //String e = pila.pop();
+                    //asm.add(e);
                     break;
                 }
                 case "Etiq":
@@ -176,18 +188,21 @@ public class Assembler {
                 }
                 case "Read":
                 {   
+                    asm.add("etiq_[" + count +"]");
                     AddAsm("getString " + GetAsmRef(el2) );
                     AddAsm("");
                     break;
                 }
                 case "Write":
                 {   
+                    asm.add("etiq_[" + count +"]");
                     AddAsm("displayString " + GetAsmRef(el2) );
                     AddAsm("displayString _NEWLINE");
                     AddAsm("");
                     break;
                 }
                 default: {
+                    asm.add("etiq_[" + count +"]");
                     AddAsm("FLD " + simbolTable1.FindByValue(el1));//el1
                     aux = "aux" + count;
                     AddAsmRef(count.toString(), aux);
@@ -197,16 +212,16 @@ public class Assembler {
                 }      
             }
             count++;
-            if(!pila.empty())
-            {
-                //System.out.println(count);
-                String e = pila.peek();
-                if(e.equals("etiq_[" + count +"]"))
-                {
-                    asm.add(e);
-                    pila.pop();
-                }
-            }
+            // if(!pila.empty())
+            // {
+            //     //System.out.println(count);
+            //     String e = pila.peek();
+            //     if(e.equals("etiq_[" + count +"]"))
+            //     {
+            //         asm.add(e);
+            //         pila.pop();
+            //     }
+            // }
         }
         List<String> variables = new ArrayList<String>();
         
