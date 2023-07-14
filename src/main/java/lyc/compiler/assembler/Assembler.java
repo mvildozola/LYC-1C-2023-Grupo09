@@ -259,7 +259,7 @@ public class Assembler {
         }
         variables.add("");
         for(int i=1; i < this.count ; i++)
-            variables.add(String.format("%-20s %-5s %-30s", "@aux" + i,"dd", "?"));
+            variables.add(String.format("%-20s %-5s %-30s", "aux" + i,"dd", "?"));
 
         variables.add(String.format("%-20s %-5s %-30s,'$'", "_NEWLINE","db", "0DH,0AH"));
         variables.add("");
